@@ -1,0 +1,54 @@
+{
+  "use_env_variable": true,
+  "development": {
+    "username": "root",
+    "password": null,
+    "database": "umkm-monitoring",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "logging": false,
+    "define": {
+      "charset": "utf8mb4",
+      "collate": "utf8mb4_unicode_ci",
+      "freezeTableName": true,
+      "underscored": true,
+      "createdAt": "created_at",
+      "updatedAt": "updated_at",
+      "deletedAt": "deleted_at"
+    }
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "umkm-monitoring",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "logging": false,
+    "define": {
+      "charset": "utf8mb4",
+      "collate": "utf8mb4_unicode_ci",
+      "freezeTableName": true,
+      "underscored": true,
+      "createdAt": "created_at",
+      "updatedAt": "updated_at",
+      "deletedAt": "deleted_at"
+    }
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "umkm-monitoring",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "logging": false,
+    "define": {
+      "charset": "utf8mb4",
+      "collate": "utf8mb4_unicode_ci",
+      "freezeTableName": true,
+      "underscored": true,
+      "createdAt": "created_at",
+      "updatedAt": "updated_at",
+      "deletedAt": "deleted_at"
+    }
+  }
+}
