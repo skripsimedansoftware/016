@@ -1,5 +1,5 @@
-import {Dimensions} from 'react-native';
 import React from 'react';
+import {Dimensions} from 'react-native';
 import {
   Box,
   Button,
@@ -19,12 +19,16 @@ import {
   LinkText,
   VStack,
 } from '@gluestack-ui/themed';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import {Controller, useForm} from 'react-hook-form';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {Controller, useForm} from 'react-hook-form';
+import * as VectorIcons from '@expo/vector-icons';
 import {AuthStackParams} from '@/interfaces/NavigatorParams';
 
 const {height, width} = Dimensions.get('window');
+
+const Icon = (name: any, size: number) => (
+  <VectorIcons.Ionicons name={name} size={size} />
+);
 
 type Props = NativeStackScreenProps<AuthStackParams, 'ResetPassword'>;
 
@@ -94,9 +98,7 @@ const ResetPasswordScreen: React.FC<Props> = ({navigation}) => {
           </FormControlHelper>
           {errors?.identity && (
             <FormControlError>
-              <FormControlErrorIcon
-                as={() => <Ionicons name="alert-circle-outline" size={20} />}
-              />
+              <FormControlErrorIcon as={Icon('alert-circle-outline', 20)} />
               <FormControlErrorText>
                 {errors.identity.message}
               </FormControlErrorText>

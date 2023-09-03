@@ -1,16 +1,33 @@
-import {View, Text} from 'react-native';
 import React from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TabNavigatorParams} from '@/interfaces/NavigatorParams';
+import {Box, Text} from '@gluestack-ui/themed';
+import {useApp} from '@/contexts/AppContext';
 
 type Props = NativeStackScreenProps<TabNavigatorParams, 'Info'>;
 
 const InfoScreen: React.FC<Props> = () => {
+  const [info, setInfo] = React.useState<string>('');
+  const {request} = useApp();
+
+  React.useEffect(() => {
+    request.head('/meta-data/info').then(
+      response => {
+        console.log(response.data);
+        setInfo(response.data);
+      },
+      error => {
+        if (!error.response) {
+          // no response
+        }
+      },
+    );
+  }, [request]);
+
   return (
-    <View
-      style={{justifyContent: 'center', alignItems: 'center', height: '100%'}}>
-      <Text>Info Screen</Text>
-    </View>
+    <Box>
+      <Text>{info}</Text>
+    </Box>
   );
 };
 

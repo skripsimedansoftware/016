@@ -1,9 +1,10 @@
-import {Dimensions} from 'react-native';
 import React from 'react';
+import {Dimensions} from 'react-native';
 import {
   Box,
   Button,
   ButtonText,
+  Center,
   FormControl,
   FormControlError,
   FormControlErrorIcon,
@@ -13,19 +14,24 @@ import {
   FormControlLabel,
   FormControlLabelText,
   HStack,
+  Image,
   Input,
   InputInput,
   Link,
   LinkText,
   VStack,
 } from '@gluestack-ui/themed';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import * as VectorIcons from '@expo/vector-icons';
 import {Controller, useForm} from 'react-hook-form';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AuthStackParams} from '@/interfaces/NavigatorParams';
 import {useApp} from '@/contexts/AppContext';
 
 const {height, width} = Dimensions.get('window');
+
+const Icon = (name: any, size: number) => (
+  <VectorIcons.Ionicons name={name} size={size} />
+);
 
 type Props = NativeStackScreenProps<AuthStackParams, 'SignUp'>;
 
@@ -63,6 +69,13 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
       alignItems="center"
       borderWidth={0}>
       <VStack width={'$96'} p={2} pb={'$6'} space={'2xl'}>
+        <Center>
+          <Image
+            size="xl"
+            borderRadius={20}
+            source={require('../../../assets/logo.png')}
+          />
+        </Center>
         <FormControl
           size="lg"
           isInvalid={typeof errors?.full_name?.message !== 'undefined'}
@@ -100,7 +113,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
           {errors?.full_name && (
             <FormControlError>
               <FormControlErrorIcon
-                as={() => <Ionicons name="alert-circle-outline" size={20} />}
+                as={() => Icon('alert-circle-outline', 20)}
               />
               <FormControlErrorText>
                 {errors.full_name.message}
@@ -143,7 +156,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
           {errors?.email && (
             <FormControlError>
               <FormControlErrorIcon
-                as={() => <Ionicons name="alert-circle-outline" size={20} />}
+                as={() => Icon('alert-circle-outline', 20)}
               />
               <FormControlErrorText>
                 {errors.email.message}
@@ -187,7 +200,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
           {errors?.password && (
             <FormControlError>
               <FormControlErrorIcon
-                as={() => <Ionicons name="alert-circle-outline" size={20} />}
+                as={() => Icon('alert-circle-outline', 20)}
               />
               <FormControlErrorText>
                 {errors.password.message}

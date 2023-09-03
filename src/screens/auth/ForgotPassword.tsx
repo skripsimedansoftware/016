@@ -1,9 +1,10 @@
-import {Dimensions} from 'react-native';
 import React from 'react';
+import {Dimensions} from 'react-native';
 import {
   Box,
   Button,
   ButtonText,
+  Center,
   FormControl,
   FormControlError,
   FormControlErrorIcon,
@@ -13,18 +14,23 @@ import {
   FormControlLabel,
   FormControlLabelText,
   HStack,
+  Image,
   Input,
   InputInput,
   Link,
   LinkText,
   VStack,
 } from '@gluestack-ui/themed';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import * as VectorIcons from '@expo/vector-icons';
 import {Controller, useForm} from 'react-hook-form';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AuthStackParams} from '@/interfaces/NavigatorParams';
 
 const {height, width} = Dimensions.get('window');
+
+const Icon = (name: any, size: number) => (
+  <VectorIcons.Ionicons name={name} size={size} />
+);
 
 type Props = NativeStackScreenProps<AuthStackParams, 'ForgotPassword'>;
 
@@ -56,6 +62,13 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
       alignItems="center"
       borderWidth={0}>
       <VStack width={'$96'} p={2} pb={'$6'} space={'2xl'}>
+        <Center>
+          <Image
+            size="xl"
+            borderRadius={20}
+            source={require('../../../assets/logo.png')}
+          />
+        </Center>
         <FormControl
           size="lg"
           isInvalid={typeof errors?.identity?.message !== 'undefined'}
@@ -94,9 +107,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
           </FormControlHelper>
           {errors?.identity && (
             <FormControlError>
-              <FormControlErrorIcon
-                as={() => <Ionicons name="alert-circle-outline" size={20} />}
-              />
+              <FormControlErrorIcon as={Icon('alert-circle-outline', 20)} />
               <FormControlErrorText>
                 {errors.identity.message}
               </FormControlErrorText>

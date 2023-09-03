@@ -1,21 +1,32 @@
-import {View, Text} from 'react-native';
 import React from 'react';
+import {StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import InfoScreen from '@/screens/app/Info';
-import HomeScreen from '@/screens/app/Home';
-import AccountScreen from '@/screens/user/Account';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import InfoScreen from '@/screens/app/Info';
 import {TabNavigatorParams} from '@/interfaces/NavigatorParams';
+import AccountScreen from '@/screens/user/Account';
+import Header from '@/components/Header';
+import HomeScreen from '@/screens/app/Home';
 
 const Tab = createBottomTabNavigator<TabNavigatorParams>();
+
+const Icon = (
+  {
+    size,
+    color,
+  }: {
+    size: number;
+    color: string;
+    focused: boolean;
+  },
+  name: any,
+) => <Ionicons name={name} size={size} color={color} />;
 
 const TabNavigator = () => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      sceneContainerStyle={{
-        backgroundColor: 'whitesmoke',
-      }}
+      sceneContainerStyle={styles.sceneContainer}
       screenOptions={{
         tabBarStyle: {
           height: 60,
@@ -25,10 +36,14 @@ const TabNavigator = () => {
           paddingTop: 10,
           paddingBottom: 8,
           borderTopWidth: 0,
-          borderWidth: 0,
+          borderBottomWidth: 0,
+          borderRightWidth: 0,
+          borderLeftWidth: 0,
+          borderColor: 'black',
           borderRadius: 20,
           elevation: 0,
           position: 'absolute',
+          // backgroundColor: '#FDD835',
           backgroundColor: 'transparent',
         },
         tabBarShowLabel: false,
@@ -39,9 +54,10 @@ const TabNavigator = () => {
           marginLeft: 10,
           marginRight: 10,
           borderWidth: 0,
-          elevation: 4,
+          elevation: 2,
         },
-        headerShown: false,
+        header: Header,
+        headerShown: true,
         tabBarActiveTintColor: '#212121',
         tabBarInactiveTintColor: '#757575',
       }}>
@@ -49,33 +65,37 @@ const TabNavigator = () => {
         name="Info"
         component={InfoScreen}
         options={{
-          tabBarIcon: ({size, color}) => {
-            return (
-              <Ionicons name="information-circle" size={size} color={color} />
-            );
-          },
+          tabBarIcon: ({color, size, focused}) =>
+            Icon({color, size, focused}, 'information-circle'),
         }}
       />
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({size, color}) => {
-            return <Ionicons name="home" size={size} color={color} />;
-          },
+          tabBarIcon: ({color, size, focused}) =>
+            Icon({color, size, focused}, 'home'),
         }}
       />
       <Tab.Screen
         name="Account"
         component={AccountScreen}
+        initialParams={{
+          edit: false,
+        }}
         options={{
-          tabBarIcon: ({size, color}) => {
-            return <Ionicons name="person-circle" size={size} color={color} />;
-          },
+          tabBarIcon: ({color, size, focused}) =>
+            Icon({color, size, focused}, 'person-circle'),
         }}
       />
     </Tab.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  sceneContainer: {
+    backgroundColor: 'white',
+  },
+});
 
 export default TabNavigator;

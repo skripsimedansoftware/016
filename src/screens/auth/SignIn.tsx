@@ -1,9 +1,10 @@
-import {Dimensions} from 'react-native';
 import React from 'react';
+import {Dimensions} from 'react-native';
 import {
   Box,
   Button,
   ButtonText,
+  Center,
   FormControl,
   FormControlError,
   FormControlErrorIcon,
@@ -13,19 +14,28 @@ import {
   FormControlLabel,
   FormControlLabelText,
   HStack,
+  Image,
   Input,
   InputInput,
   Link,
   LinkText,
+  Toast,
+  ToastDescription,
+  ToastTitle,
   VStack,
+  useToast,
 } from '@gluestack-ui/themed';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import * as VectorIcons from '@expo/vector-icons';
 import {Controller, useForm} from 'react-hook-form';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AuthStackParams} from '@/interfaces/NavigatorParams';
 import {useApp} from '@/contexts/AppContext';
 
 const {height, width} = Dimensions.get('window');
+
+const Icon = (name: any, size: number) => (
+  <VectorIcons.Ionicons name={name} size={size} />
+);
 
 type Props = NativeStackScreenProps<AuthStackParams, 'SignIn'>;
 
@@ -47,9 +57,30 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
   });
 
   const {signIn} = useApp();
+  const toast = useToast();
 
   const onSubmit = (data: {identity: string; password: string}) => {
-    signIn(data.identity, data.password);
+    signIn(data.identity, data.password).then(success => {
+      if (!success) {
+        toast.show({
+          render: () => {
+            return (
+              <Toast w={width - 40} bgColor="red">
+                <VStack space="xs">
+                  <ToastTitle fontWeight="bold" color="white">
+                    Authentication Failure
+                  </ToastTitle>
+                  <ToastDescription color="white">
+                    Please use valid credential
+                  </ToastDescription>
+                </VStack>
+              </Toast>
+            );
+          },
+          placement: 'bottom',
+        });
+      }
+    });
   };
 
   return (
@@ -57,10 +88,18 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
       h={height}
       w={width}
       mb={200}
-      justifyContent="center"
+      // justifyContent="center"
+      paddingTop={height / 10}
       alignItems="center"
       borderWidth={0}>
       <VStack width={'$96'} p={2} pb={'$6'} space={'2xl'}>
+        <Center>
+          <Image
+            size="xl"
+            borderRadius={20}
+            source={require('../../../assets/logo.png')}
+          />
+        </Center>
         <FormControl
           size="lg"
           isInvalid={typeof errors?.identity?.message !== 'undefined'}
@@ -99,9 +138,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
           </FormControlHelper>
           {errors?.identity && (
             <FormControlError>
-              <FormControlErrorIcon
-                as={() => <Ionicons name="alert-circle-outline" size={20} />}
-              />
+              <FormControlErrorIcon as={Icon('alert-circle-outline', 20)} />
               <FormControlErrorText>
                 {errors.identity.message}
               </FormControlErrorText>
@@ -143,9 +180,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
           </FormControlHelper>
           {errors?.password && (
             <FormControlError>
-              <FormControlErrorIcon
-                as={() => <Ionicons name="alert-circle-outline" size={20} />}
-              />
+              <FormControlErrorIcon as={Icon('alert-circle-outline', 20)} />
               <FormControlErrorText>
                 {errors.password.message}
               </FormControlErrorText>
