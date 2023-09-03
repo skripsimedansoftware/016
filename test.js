@@ -1,9 +1,8 @@
 const http = require('http');
 const express = require('express');
 const path = require('path');
-// const bodyParser = require('body-parser');
 
-const pdfMakePrinter = require('pdfmake');
+const PdfMakePrinter = require('pdfmake');
 
 const app = express();
 
@@ -21,7 +20,7 @@ function createPdfBinary(pdfDoc, callback) {
     },
   };
 
-  const printer = new pdfMakePrinter(fontDescriptors);
+  const printer = new PdfMakePrinter(fontDescriptors);
 
   const doc = printer.createPdfKitDocument(pdfDoc, {
     version: '1.4',

@@ -1,0 +1,14 @@
+{% extends "openstreetmap.njk" %}
+
+{% block scriptContent %}
+<script>
+const searchParams = new URLSearchParams(window.location.search);
+if (searchParams.has('lat') && searchParams.has('lon')) {
+  const lat = searchParams.get('lat');
+  const lon = searchParams.get('lon');
+  L.marker(L.latLng(lat, lon)).addTo(OpenStreetMap);
+} else {
+  L.marker(L.latLng(3.5896654, 98.6738261)).addTo(OpenStreetMap);
+}
+</script>
+{% endblock scriptContent %}

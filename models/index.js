@@ -1,5 +1,6 @@
-/** @typedef {typeof import('sequelize').Model} Model */
 /**
+ * @typedef {typeof import('sequelize').Model} Model
+ *
  * Sequelize model.
  *
  * @typedef {Object} DB

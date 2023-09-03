@@ -1,0 +1,16 @@
+{% extends "openstreetmap.njk" %}
+
+{% block scriptContent %}
+<script>
+const markers = JSON.parse(`{{ data }}`);
+if (markers.length > 0) {
+  markers.forEach((item, index) => {
+    if (item.latitude !== null && item.longitude !== null) {
+      L.marker(L.latLng(item.latitude, item.longitude), {
+        // other config
+      }).addTo(OpenStreetMap).bindPopup(item.nama)
+    }
+  });
+}
+</script>
+{% endblock scriptContent %}

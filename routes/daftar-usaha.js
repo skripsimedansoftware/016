@@ -1,4 +1,3 @@
-const path = require('node:path');
 const express = require('express');
 const { DaftarUsaha, Pengguna } = require('../models');
 
@@ -18,10 +17,6 @@ app.get('/', (req, res, next) => {
   }).then(({ count, rows }) => res.json({ count, rows }), next);
 });
 
-app.get('/maps', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'public/maps.html'));
-});
-
 app.get('/status/:status', (req, res, next) => {
   DaftarUsaha.findAndCountAll({
     where: {
@@ -30,7 +25,7 @@ app.get('/status/:status', (req, res, next) => {
     include: [
       {
         model: Pengguna,
-        as: 'owner',
+        as: 'pengusaha',
       },
     ],
   }).then(({ count, rows }) => res.json({ count, rows }), next);
@@ -43,6 +38,17 @@ app.get('/:id', (req, res, next) => {
     }
 
     return res.json(daftarUsaha);
+  }, next);
+});
+
+app.get('/:id/set-status/:status', (req, res, next) => {
+  const { status } = req.params;
+  DaftarUsaha.findByPk(req.params.id).then((daftarUsaha) => {
+    if (daftarUsaha === null) {
+      return next();
+    }
+
+    return daftarUsaha.update({ status }).then((updated) => res.json(updated), next);
   }, next);
 });
 

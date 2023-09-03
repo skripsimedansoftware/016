@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   DaftarUsaha.init({
+    nama: DataTypes.STRING,
     produk: DataTypes.STRING,
     jenis_usaha: DataTypes.STRING,
     sektor_usaha: DataTypes.STRING,

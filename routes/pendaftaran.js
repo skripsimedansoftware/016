@@ -10,12 +10,6 @@ const upload = multer({
   dest: 'public/uploads',
 });
 
-app.use((req, res, next) => {
-  console.log('loaded');
-  console.log(req.headers);
-  next();
-});
-
 /**
  * * Step 1
  * * Data pendaftaran :
@@ -56,10 +50,7 @@ app.post('/step-1', upload.fields([
       fotocopy_npwp: req.files.fotocopy_npwp[0].filename,
     };
 
-    console.log(updateFields);
-
-    return res.json({});
-    // return pengguna.update(updateFields).then((updated) => res.json(updated), next);
+    return pengguna.update(updateFields).then((updated) => res.json(updated), next);
   });
 });
 

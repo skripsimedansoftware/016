@@ -12,6 +12,10 @@ const app = express.Router();
 const fileInfo = path.join(process.cwd(), 'info');
 
 app.get('/info', (req, res, next) => {
+  fs.statfs(fileInfo).then(() => fs.readFile(fileInfo).then((info) => res.render('ckeditor', { data: info }), () => next()), () => fs.writeFile(fileInfo, '').then((val) => res.json(val), () => next()));
+});
+
+app.head('/info', (req, res, next) => {
   fs.statfs(fileInfo).then(() => fs.readFile(fileInfo).then((info) => res.send(info), () => next()), () => fs.writeFile(fileInfo, '').then((val) => res.json(val), () => next()));
 });
 

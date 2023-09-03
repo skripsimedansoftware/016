@@ -74,10 +74,9 @@ app.post('/sign-in', signInValidation, (req, res, next) => {
   });
 });
 
-app.get('/update-token', async (req, res, next) => {
+app.get('/validate-token', async (req, res, next) => {
   try {
     await JWTVerify(req.header('authorization').replace('Bearer', '').trim());
-
     const decodedJWT = JWTDecode(req.header('authorization'));
     return Pengguna.findByPk(decodedJWT.id).then(async (pengguna) => {
       const response = {

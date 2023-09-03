@@ -4,7 +4,7 @@ const express = require('express');
 const HTTPErrors = require('http-errors');
 const multer = require('multer');
 const PDFMake = require('pdfmake');
-const { Pengguna } = require('../models');
+const { Pengguna, DaftarUsaha } = require('../models');
 const { updateProfile } = require('../validators/pengguna');
 
 const app = express.Router();
@@ -148,7 +148,18 @@ const date = now.getDate();
 // const minutes = now.getMinutes();
 
 app.get('/print', (req, res, next) => {
-  Pengguna.findAndCountAll().then(({ count, rows }) => {
+  Pengguna.findAndCountAll({
+    include: [
+      {
+        model: DaftarUsaha,
+        as: 'usaha',
+      },
+    ],
+    where: {
+      jabatan: 'pengusaha',
+    },
+  }).then(({ rows }) => {
+    console.log(rows);
     createPdfBinary({
       pageOrientation: 'landscape',
       content: [
@@ -173,18 +184,27 @@ app.get('/print', (req, res, next) => {
                 // 'NIK', 'Email', 'Username', 'Nama Lengkap', 'Jabatan',
                 'Nama Usaha', 'Nama Pemilik', 'Alamat Usaha', 'Desa/Kelurahan', 'Kecamatan', 'Kabupaten/Kota', 'Provinsi', 'Sektor Usaha', 'Jenis Usaha', 'Jenis Usaha Detail', 'Produk', 'Tahun Data', 'Omzet Pertahun', 'Asset',
               ],
-              // ...rows.map((item) => [
-              //   {
-              //     text: item.id,
-              //     bold: true,
-              //     alignment: 'center',
-              //   },
-              //   item.nik !== null ? item.nik : '-',
-              //   item.email,
-              //   item.username !== null ? item.username : '-',
-              //   item.nama_lengkap,
-              //   item.jabatan.toUpperCase().replace('-', ' '),
-              // ]),
+              ...rows.map((item) => [
+                {
+                  text: item.id,
+                  bold: true,
+                  alignment: 'center',
+                },
+                item.usaha !== null ? item.usaha.produk : '-', // Nama usaha
+                item.nama_lengkap, // Nama pemilik
+                item.usaha !== null ? item.usaha.produk : '-', // Alamat usaha
+                item.usaha !== null ? item.usaha.produk : '-', // Desa / kelurahan
+                item.usaha !== null ? item.usaha.produk : '-', // Kecamatan
+                item.usaha !== null ? item.usaha.produk : '-', // Kabupaten / kota
+                item.usaha !== null ? item.usaha.produk : '-', // Provinsi
+                item.usaha !== null ? item.usaha.produk : '-', // Sektor usaha
+                item.usaha !== null ? item.usaha.produk : '-', // Jenis usaha
+                item.usaha !== null ? item.usaha.produk : '-', // Jenis usaha detail
+                item.usaha !== null ? item.usaha.produk : '-', // Produk
+                item.usaha !== null ? item.usaha.produk : '-', // Tahun data
+                item.usaha !== null ? item.usaha.produk : '-', // Omzet per tahun
+                item.usaha !== null ? item.usaha.produk : '-', // Asset
+              ]),
             ],
           },
         },
@@ -193,11 +213,7 @@ app.get('/print', (req, res, next) => {
         fontSize: 8,
         bold: true,
       },
-    }, (pdfFile) => {
-      res.contentType('application/pdf');
-      // res.setHeader('Content-disposition', 'inline; filename="pengguna.pdf"');
-      res.send(pdfFile);
-    }, (error) => {
+    }, (pdfFile) => res.contentType('application/pdf').send(pdfFile), (error) => {
       res.send(`ERROR : ${error}`);
     });
   }, next);

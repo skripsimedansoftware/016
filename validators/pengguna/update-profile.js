@@ -45,7 +45,8 @@ module.exports = [
     .custom(validateUsername),
   body('foto_profil')
     .custom((value, { req }) => {
-      const fileExt = mime.getExtension(req.file.mimetype);
+	  if (req.file) {
+		const fileExt = mime.getExtension(req.file.mimetype);
       const imageExtensions = ['jpg', 'jpeg', 'png'];
 
       if (req.file) {
@@ -58,8 +59,13 @@ module.exports = [
         fs.rmSync(req.file.path);
         throw new Error('File harus berupa gambar');
       }
+	  }
 
       return true;
     }),
+	(req, res, next) => {
+		console.log(req.headers)
+		return next();
+	},
   (req, res, next) => (!validationResult(req).isEmpty() ? next(HTTPErrors.BadRequest('validation')) : next()),
 ];
