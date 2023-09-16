@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   Pengguna.init({
-    nik: DataTypes.INTEGER,
+    nik: DataTypes.STRING,
     email: {
       type: DataTypes.STRING,
       allowNull: false,

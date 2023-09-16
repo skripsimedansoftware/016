@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const mime = require('mime');
 const HTTPErrors = require('http-errors');
 const { DaftarUsaha, Pengguna } = require('../models');
 const { pendaftaran } = require('../validators');
@@ -42,15 +43,13 @@ app.post('/step-1', upload.fields([
       return next(HTTPErrors.NotFound('Pengguna tidak ditemukan'));
     }
 
-    const updateFields = {
-      nik: nik || pengguna.nik,
-      nomor_hp: nomor_hp || pengguna.nomor_hp,
+    return pengguna.update({
+      nik,
+      nomor_hp,
       fotocopy_kk: req.files.fotocopy_kk[0].filename,
       fotocopy_ktp: req.files.fotocopy_ktp[0].filename,
       fotocopy_npwp: req.files.fotocopy_npwp[0].filename,
-    };
-
-    return pengguna.update(updateFields).then((updated) => res.json(updated), next);
+    }).then(() => res.json(pengguna), next);
   });
 });
 
@@ -104,6 +103,14 @@ app.post('/step-2', pendaftaran.step2, (req, res, next) => {
   }, next);
 });
 
+/**
+ * * Step 3
+ * * Data pendaftaran :
+ * * - Brand / nama usaha
+ * * - Deskripsi produk
+ * * - Detail usaha
+ * * - Alamat
+ */
 app.post('/step-3', pendaftaran.step3, (req, res, next) => {
   Pengguna.findByPk(req.user, {
     include: [
@@ -125,6 +132,13 @@ app.post('/step-3', pendaftaran.step3, (req, res, next) => {
   });
 });
 
+/**
+ * * Step 3
+ * * Data pendaftaran :
+ * * - Fotocopy keterangan usaha
+ * * - Fotocopy izin usaha
+ * * - Foto produksi
+ */
 app.post('/step-4', upload.fields([
   {
     name: 'fotocopy_keterangan_usaha',
