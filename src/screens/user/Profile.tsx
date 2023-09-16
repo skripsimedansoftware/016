@@ -33,19 +33,17 @@ const UserProfileScreen: React.FC<Props> = ({route}) => {
       setLoading(true);
       request.get(`/pengguna/profile/${route.params.id}`).then(
         ({data}) => {
-          console.log(data);
           setProfile(data);
           setLoading(false);
         },
         error => {
-          console.log(error);
+          if (typeof error.response === 'undefined') {
+            // server offline
+          }
           setLoading(false);
         },
       );
     }
-    // return () => {
-    //   second
-    // }
   }, [profile?.id, route.params.id, request]);
 
   if (loading) {

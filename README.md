@@ -6,6 +6,7 @@
 
 - assets
 - src
+  - config
   - components
   - contexts
   - interfaces
@@ -14,11 +15,3 @@
     - app
     - auth
     - user
-
-
-
-- TabNavigation
-  - Info (Screen)
-  - Home (Stack Navigator)
-    - ImagePreview
-  - Account (Screen)

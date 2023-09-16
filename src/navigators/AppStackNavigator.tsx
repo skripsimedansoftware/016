@@ -9,9 +9,10 @@ import MonitoringScreen from '@/screens/app/Monitoring';
 import ReportScreen from '@/screens/app/Report';
 import ImagePreview from '@/screens/app/ImagePreview';
 import OpenStreetMap from '@/screens/app/OpenStreetMap';
-import TabNavigator from './TabNavigator';
 import Header from '@/components/Header';
 import UserProfileScreen from '@/screens/user/Profile';
+import MonitoringDetailScreen from '@/screens/app/MonitoringDetail';
+import TabNavigator from './TabNavigator';
 
 const AppStack = createNativeStackNavigator<AppStackNavigatorParams>();
 
@@ -37,6 +38,10 @@ const AppStackNavigator = () => {
       <AppStack.Screen name="Activity" component={ActivityScreen} />
       <AppStack.Screen name="Settings" component={SettingsScreeen} />
       <AppStack.Screen name="Monitoring" component={MonitoringScreen} />
+      <AppStack.Screen
+        name="MonitoringDetail"
+        component={MonitoringDetailScreen}
+      />
       <AppStack.Screen name="Registration" component={RegistrationScreen} />
       <AppStack.Screen name="OpenStreetMap" component={OpenStreetMap} />
       <AppStack.Screen

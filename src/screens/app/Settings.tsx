@@ -43,6 +43,7 @@ import {useApp} from '@/contexts/AppContext';
 import ListEmptyItem from '@/components/ListEmptyItem';
 import {useNavigation} from '@react-navigation/native';
 import LottieLoader from '@/components/LottieLoader';
+import WebView from 'react-native-webview';
 
 type MetaDataType = {
   id?: number | string;
@@ -165,7 +166,10 @@ const JenisUsaha = () => {
   };
 
   React.useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', backActionHandler);
+    const backPress = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backActionHandler,
+    );
     if (!isForm) {
       setIsLoading(true);
       request
@@ -180,7 +184,7 @@ const JenisUsaha = () => {
     }
 
     return () => {
-      BackHandler.removeEventListener('hardwareBackPress', backActionHandler);
+      backPress.remove();
     };
   }, [request, isForm, backActionHandler]);
 
@@ -248,11 +252,7 @@ const JenisUsaha = () => {
   }
 
   return (
-    <Box
-      borderWidth={0}
-      backgroundColor="white"
-      // h={height - height / 4}
-      borderTopWidth={1}>
+    <Box flex={1} borderWidth={0} backgroundColor="white" borderTopWidth={1}>
       <FlatList
         data={data as MetaDataType[]}
         renderItem={props => <ItemData item={props.item} />}
@@ -343,7 +343,10 @@ const SektorUsaha = () => {
   };
 
   React.useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', backActionHandler);
+    const backPress = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backActionHandler,
+    );
     if (!isForm) {
       setIsLoading(true);
       request
@@ -358,7 +361,7 @@ const SektorUsaha = () => {
     }
 
     return () => {
-      BackHandler.removeEventListener('hardwareBackPress', backActionHandler);
+      backPress.remove();
     };
   }, [request, isForm, backActionHandler]);
 
@@ -447,6 +450,45 @@ const SektorUsaha = () => {
   );
 };
 
+const Informasi = () => {
+  const {request} = useApp();
+  const {height} = Dimensions.get('screen');
+  const navigation = useNavigation<NavigationProps>();
+
+  const backActionHandler = React.useCallback(() => {
+    navigation.setParams({part: undefined});
+    return true;
+  }, [navigation]);
+
+  React.useEffect(() => {
+    const backPress = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backActionHandler,
+    );
+
+    return () => {
+      backPress.remove();
+    };
+  }, [backActionHandler]);
+
+  return (
+    <Box flex={1} borderWidth={0} borderColor="blue" pt={'$16'}>
+      <WebView source={{uri: `${request.getUri()}/meta-data/info`}} />
+      <Button marginBottom={height / 4.3} w={'$4/6'} alignSelf="center">
+        <ButtonText>Simpan</ButtonText>
+      </Button>
+    </Box>
+  );
+};
+
+const Banner = () => {
+  return (
+    <Box flex={1} borderWidth={1}>
+      <Text>Banner</Text>
+    </Box>
+  );
+};
+
 const SettingsScreeen: React.FC<ScreenProps> = ({route, navigation}) => {
   if (route.params?.part === 'jenis-usaha') {
     return <JenisUsaha />;
@@ -454,6 +496,14 @@ const SettingsScreeen: React.FC<ScreenProps> = ({route, navigation}) => {
 
   if (route.params?.part === 'sektor-usaha') {
     return <SektorUsaha />;
+  }
+
+  if (route.params?.part === 'informasi') {
+    return <Informasi />;
+  }
+
+  if (route.params?.part === 'banner') {
+    return <Banner />;
   }
 
   return (
@@ -478,7 +528,7 @@ const SettingsScreeen: React.FC<ScreenProps> = ({route, navigation}) => {
         <Menu
           text="Informasi"
           onPress={() => {
-            navigation.setParams({part: 'sektor-usaha'});
+            navigation.setParams({part: 'informasi'});
           }}
         />
       </HStack>
@@ -486,7 +536,7 @@ const SettingsScreeen: React.FC<ScreenProps> = ({route, navigation}) => {
         <Menu
           text="Banner"
           onPress={() => {
-            navigation.setParams({part: 'sektor-usaha'});
+            navigation.setParams({part: 'banner'});
           }}
         />
       </HStack>

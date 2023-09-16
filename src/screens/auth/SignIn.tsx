@@ -7,7 +7,7 @@ import {
   Center,
   FormControl,
   FormControlError,
-  FormControlErrorIcon,
+  // FormControlErrorIcon,
   FormControlErrorText,
   FormControlHelper,
   FormControlHelperText,
@@ -25,7 +25,7 @@ import {
   VStack,
   useToast,
 } from '@gluestack-ui/themed';
-import * as VectorIcons from '@expo/vector-icons';
+// import * as VectorIcons from '@expo/vector-icons';
 import {Controller, useForm} from 'react-hook-form';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AuthStackParams} from '@/interfaces/NavigatorParams';
@@ -33,9 +33,9 @@ import {useApp} from '@/contexts/AppContext';
 
 const {height, width} = Dimensions.get('window');
 
-const Icon = (name: any, size: number) => (
-  <VectorIcons.Ionicons name={name} size={size} />
-);
+// const Icon = (name: any, size: number) => (
+//   <VectorIcons.Ionicons name={name} size={size} />
+// );
 
 type Props = NativeStackScreenProps<AuthStackParams, 'SignIn'>;
 
@@ -59,7 +59,8 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
   const {signIn} = useApp();
   const toast = useToast();
 
-  const onSubmit = (data: {identity: string; password: string}) => {
+  const onSubmit = (data: IForm) => {
+    console.log(data);
     signIn(data.identity, data.password).then(success => {
       if (!success) {
         toast.show({
@@ -138,7 +139,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
           </FormControlHelper>
           {errors?.identity && (
             <FormControlError>
-              <FormControlErrorIcon as={Icon('alert-circle-outline', 20)} />
+              {/* <FormControlErrorIcon as={Icon('alert-circle-outline', 20)} /> */}
               <FormControlErrorText>
                 {errors.identity.message}
               </FormControlErrorText>
@@ -180,7 +181,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
           </FormControlHelper>
           {errors?.password && (
             <FormControlError>
-              <FormControlErrorIcon as={Icon('alert-circle-outline', 20)} />
+              {/* <FormControlErrorIcon as={Icon('alert-circle-outline', 20)} /> */}
               <FormControlErrorText>
                 {errors.password.message}
               </FormControlErrorText>

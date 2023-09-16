@@ -24,8 +24,10 @@ import {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
+import {Picker} from '@react-native-picker/picker';
 
-type TextFormProps<T extends FieldValues> = {
+export type PickerItem = {label: string; value: string};
+type Props<T extends FieldValues> = {
   name: Path<T>;
   size?: 'sm' | 'md' | 'lg';
   label: string;
@@ -39,6 +41,10 @@ type TextFormProps<T extends FieldValues> = {
   isFile?: boolean;
   isImage?: boolean;
   isMultiple?: boolean;
+  isPicker?: boolean;
+  pickerData?: PickerItem[];
+  pickerEnable?: boolean;
+  pickerOnChange?: Function;
 };
 
 const Icon = (name: any, size: number) => <Ionicons name={name} size={size} />;
@@ -57,7 +63,11 @@ const AppForm = <T extends FieldValues>({
   isFile,
   isImage,
   isMultiple,
-}: TextFormProps<T>) => {
+  isPicker,
+  pickerData,
+  pickerEnable,
+  pickerOnChange,
+}: Props<T>) => {
   const [cameraPermission, requestCameraPermission] =
     ImagePicker.useCameraPermissions();
   const [mediaLibraryPermission, requestMediaLibraryPermission] =
@@ -78,6 +88,18 @@ const AppForm = <T extends FieldValues>({
     requestMediaLibraryPermission,
   ]);
 
+  const PickerItems = () => {
+    const items: React.ReactElement[] = [];
+    console.log({pickerData});
+    pickerData?.forEach((item, key) => {
+      items.push(
+        <Picker.Item key={key} label={item.label} value={item.value} />,
+      );
+    });
+
+    return items;
+  };
+
   return (
     <FormControl
       size={size}
@@ -92,6 +114,23 @@ const AppForm = <T extends FieldValues>({
         rules={rules}
         control={control}
         render={({field: {onBlur, onChange, value}}) => {
+          if (isPicker && pickerData) {
+            console.log('pickerData');
+            return (
+              <Picker
+                enabled={pickerEnable || true}
+                mode="dialog"
+                selectedValue={value}
+                onValueChange={itemValue => {
+                  onChange(itemValue);
+                  if (pickerOnChange) {
+                    pickerOnChange(itemValue);
+                  }
+                }}>
+                {PickerItems()}
+              </Picker>
+            );
+          }
           return isFile ? (
             <Button
               size="sm"

@@ -10,7 +10,7 @@ import materialColors2014 from '@/config/MaterialColors2014';
 
 type NavigationProps = NativeStackNavigationProp<
   AppStackNavigatorParams,
-  'Home'
+  'Tab'
 >;
 
 const {height} = Dimensions.get('window');

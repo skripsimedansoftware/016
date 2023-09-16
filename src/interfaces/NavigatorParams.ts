@@ -1,5 +1,4 @@
 import type {ImageSourcePropType} from 'react-native';
-// import {NavigatorScreenParams} from '@react-navigation/native';
 
 export type AuthStackParams = {
   SignIn: undefined;
@@ -16,11 +15,12 @@ export type AppStackNavigatorParams = {
   Activity: undefined;
   Settings:
     | {
-        part?: 'jenis-usaha' | 'sektor-usaha';
+        part?: 'jenis-usaha' | 'sektor-usaha' | 'informasi' | 'banner';
       }
     | undefined;
   Monitoring: undefined;
-  Registration: {step: 1 | 2 | 3 | 4} | undefined;
+  MonitoringDetail: undefined;
+  Registration: {step: 1 | 2 | 3 | 4 | string | number} | undefined;
   ImagePreview: {image: ImageSourcePropType};
   OpenStreetMap: {version: 1 | 2};
 };

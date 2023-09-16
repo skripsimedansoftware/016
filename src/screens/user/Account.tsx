@@ -15,17 +15,19 @@ import {
   VStack,
 } from '@gluestack-ui/themed';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import * as ImagePicker from 'expo-image-picker';
+import {useForm} from 'react-hook-form';
 import {TabNavigatorParams} from '@/interfaces/NavigatorParams';
 import {useApp} from '@/contexts/AppContext';
 import LabelItem from '@/components/LabelItem';
 import AppForm from '@/components/Form';
-import {useForm} from 'react-hook-form';
 import LottieLoader from '@/components/LottieLoader';
 
 type IForm = {
   email: string;
   username: string;
   nama_lengkap: string;
+  foto_profil: string | null;
 };
 
 type Props = NativeStackScreenProps<TabNavigatorParams, 'Account'>;
@@ -61,12 +63,15 @@ const AccountScreen: React.FC<Props> = ({route, navigation}) => {
     control,
     handleSubmit,
     setError,
+    setValue,
+    watch,
     formState: {errors},
   } = useForm<IForm>({
     defaultValues: {
       email: authInfo?.email,
       username: authInfo?.username,
       nama_lengkap: authInfo?.nama_lengkap,
+      foto_profil: authInfo?.foto_profil,
     },
   });
 
@@ -109,6 +114,7 @@ const AccountScreen: React.FC<Props> = ({route, navigation}) => {
 
     return () => {
       backAction.remove();
+      navigation.removeListener('blur', onBlurAction);
     };
   }, [navigation, backActionHandler, onBlurAction]);
 
@@ -123,6 +129,32 @@ const AccountScreen: React.FC<Props> = ({route, navigation}) => {
   if (route.params?.edit) {
     return (
       <Box flex={1} p={20}>
+        <Center>
+          <TouchableOpacity
+            onLongPress={async () => {
+              const {assets, canceled} =
+                await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  quality: 1,
+                });
+
+              if (!canceled) {
+                setValue('foto_profil', assets[0].uri);
+              }
+            }}>
+            <Avatar bgColor="$indigo600" size="2xl">
+              <AvatarFallbackText>{authInfo?.nama_lengkap}</AvatarFallbackText>
+              {watch('foto_profil') !== null && (
+                <AvatarImage
+                  source={{
+                    uri: watch('foto_profil') as string,
+                  }}
+                  backgroundColor="black"
+                />
+              )}
+            </Avatar>
+          </TouchableOpacity>
+        </Center>
         <VStack space="md">
           <AppForm
             control={control}
@@ -155,7 +187,7 @@ const AccountScreen: React.FC<Props> = ({route, navigation}) => {
             error={errors.nama_lengkap}
           />
           <Button onPress={handleSubmit(onSubmit)}>
-            <ButtonText>Kirim</ButtonText>
+            <ButtonText>Simpan</ButtonText>
           </Button>
         </VStack>
       </Box>

@@ -1,6 +1,6 @@
+import React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, {AxiosInstance} from 'axios';
-import React from 'react';
 
 type IAuthInfo = {
   id: number;
@@ -17,6 +17,7 @@ type IAppContext = {
   isAuthenticated: boolean;
   isAuthenticating: boolean;
   setAuthInfo: (authInfo: IAuthInfo | null) => void;
+  setAuthToken: (token: string) => void;
   setIsAuthenticated: (status: boolean) => void;
   setIsAuthenticating: (status: boolean) => void;
   signIn: (identity: string, password: string) => Promise<boolean>;
@@ -29,6 +30,7 @@ const AppContext = React.createContext<IAppContext>({
   isAuthenticated: false,
   isAuthenticating: false,
   setAuthInfo: () => {},
+  setAuthToken: () => {},
   setIsAuthenticated: () => {},
   setIsAuthenticating: () => {},
   signIn: () => Promise.resolve(false),
@@ -39,8 +41,9 @@ const AppContext = React.createContext<IAppContext>({
 const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [authInfo, setAuthInfo] = React.useState<IAuthInfo | null>(null);
   const [authToken, setAuthToken] = React.useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-  const [isAuthenticating, setIsAuthenticating] = React.useState(false);
+  const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
+  const [isAuthenticating, setIsAuthenticating] =
+    React.useState<boolean>(false);
   let request = axios.create({
     baseURL: 'http://192.168.43.76:3000',
     headers: {
@@ -55,29 +58,27 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
 
   React.useEffect(() => {
     loadToken();
-  }, [authToken]);
+  }, []);
 
-  const signIn = React.useCallback(
-    async (identity: string, password: string) => {
-      setIsAuthenticating(true);
-      return request.post('auth/sign-in', {identity, password}).then(
-        async ({data}) => {
-          setAuthInfo(data.pengguna);
-          setAuthToken(data.token);
-          setIsAuthenticated(true);
-          setIsAuthenticating(false);
-          await AsyncStorage.setItem('AUTH-TOKEN', data.token);
-          return true;
-        },
-        error => {
-          console.log(error);
-          setIsAuthenticating(false);
-          return false;
-        },
-      );
-    },
-    [request],
-  );
+  const signIn = async (identity: string, password: string) => {
+    console.log('Submited');
+    setIsAuthenticating(true);
+    return request
+      .post('auth/sign-in', {identity, password})
+      .then(async ({data}) => {
+        setAuthInfo(data.pengguna);
+        setAuthToken(data.token);
+        setIsAuthenticated(true);
+        setIsAuthenticating(false);
+        await AsyncStorage.setItem('AUTH-TOKEN', data.token);
+        return true;
+      })
+      .catch(() => {
+        setIsAuthenticated(false);
+        setIsAuthenticating(false);
+        return false;
+      });
+  };
 
   const signOut = React.useCallback(async () => {
     setIsAuthenticating(true);
@@ -95,6 +96,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
         isAuthenticated,
         isAuthenticating,
         setAuthInfo,
+        setAuthToken,
         setIsAuthenticated,
         setIsAuthenticating,
         signIn,

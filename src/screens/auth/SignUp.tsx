@@ -54,10 +54,30 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
     },
   });
 
-  const {signIn} = useApp();
+  const {
+    request,
+    setIsAuthenticating,
+    setIsAuthenticated,
+    setAuthInfo,
+    setAuthToken,
+  } = useApp();
 
-  const onSubmit = (data: {email: string; password: string}) => {
-    signIn(data.email, data.password);
+  const onSubmit = (data: IForm) => {
+    setIsAuthenticating(true);
+    request.post('auth/sign-up', data).then(
+      response => {
+        setAuthInfo(response.data.pengguna);
+        setAuthToken(response.data.token);
+        setIsAuthenticated(true);
+        setIsAuthenticating(false);
+      },
+      error => {
+        setIsAuthenticating(false);
+        if (!error.response) {
+          //
+        }
+      },
+    );
   };
 
   return (
