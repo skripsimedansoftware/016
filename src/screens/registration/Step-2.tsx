@@ -17,6 +17,11 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useApp} from '@/contexts/AppContext';
 import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 import JenisUsahaPicker from '@/components/Picker/JenisUsaha';
+import SektorUsahaPicker from '@/components/Picker/SektorUsaha';
+import ProvinsiPicker from '@/components/Picker/Provinsi';
+import KabupatenAtauKotaPicker from '@/components/Picker/KabupatenAtauKota';
+import KecamatanPicker from '@/components/Picker/Kecamatan';
+import DesaAtauKelurahanPicker from '@/components/Picker/DesaAtauKelurahan';
 
 /**
  * * Step 2
@@ -48,7 +53,7 @@ const RegistrationStep2 = () => {
     control,
     handleSubmit,
     watch,
-    formState: {errors},
+    formState: {},
   } = useForm<IForm>({
     defaultValues: {
       sektor_usaha: '',
@@ -57,52 +62,11 @@ const RegistrationStep2 = () => {
   const {request} = useApp();
   const toast = useToast();
   const navigation = useNavigation<NavigationProps>();
-  // const [dataJenisUsaha, setDataJenisUsaha] = React.useState<PickerItem[]>([]);
-  // const [dataSektorUsaha, setDataSektorUsaha] = React.useState<PickerItem[]>(
-  //   [],
-  // );
-  // const [dataPrivinsi, setDataPrivinsi] = React.useState<PickerItem[]>([]);
-  // const [dataKabupatenKota, setDataKabupatenKota] = React.useState<
-  //   PickerItem[]
-  // >([]);
-  // const [dataKecamatan, setDataKecamatan] = React.useState<PickerItem[]>([]);
-  // const [dataDesaKelurahan, setDataDesaKelurahan] = React.useState<
-  //   PickerItem[]
-  // >([]);
   const {width} = Dimensions.get('window');
 
-  // const loadItems = React.useCallback(async () => {
-  //   const jenisUsaha = await request.get('/meta-data/jenis-usaha');
-  //   // const sektorUsaha = await request.get('/meta-data/sektor-usaha');
-  //   // const provinces = await request.get('/meta-data/provinces');
-  //   // const districts = await request.get('/meta-data/districts');
-  //   // const villages = await request.get('/meta-data/villages');
-  //   setDataJenisUsaha(jenisUsaha.data.rows);
-  //   // setDataSektorUsaha(sektorUsaha.data.rows);
-  //   // setDataPrivinsi(provinces.data.rows);
-
-  //   // setDataKabupatenKota(provinces.data);
-  //   // setDataKecamatan(districts.data);
-  //   // setDataDesaKelurahan(villages.data);
-  // }, [request]);
-
-  // const loadRegencies = React.useCallback(
-  //   async (provinceId: string) => {
-  //     const regencies = await request.get(`/meta-data/regencies/${provinceId}`);
-  //     setDataPrivinsi(regencies.data);
-  //   },
-  //   [request],
-  // );
-
-  React.useEffect(() => {}, []);
-
   const onSubmit = async (data: IForm) => {
-    const formData = new FormData();
-
-    formData.append('nik', data?.sektor_usaha);
-
     // Send request
-    request.post('/pendaftaran/step-2', formData).then(
+    request.post('/pendaftaran/step-2', data).then(
       () => {
         navigation.setParams({step: 3});
       },
@@ -117,7 +81,7 @@ const RegistrationStep2 = () => {
                 <Toast w={width - 40} bgColor="red">
                   <VStack space="xs">
                     <ToastTitle fontWeight="bold" color="white">
-                      Authentication Failure
+                      Failure
                     </ToastTitle>
                     <ToastDescription color="white">
                       Please check your network
@@ -142,30 +106,47 @@ const RegistrationStep2 = () => {
             label="Jenis Usaha"
             name="jenis_usaha"
           />
-          {/* <AppForm<IForm>
+
+          <SektorUsahaPicker<IForm>
+            size="sm"
             control={control}
-            name="jenis_usaha"
-            label="Jenis Usaha"
-            helperText="Jenis Usaha"
-            rules={{required: 'Silahkan pilih jenis usaha'}}
-            invalid={typeof errors.jenis_usaha?.message !== 'undefined'}
-            required
-            error={errors.jenis_usaha}
-            isPicker
-            pickerData={[]}
-          /> */}
-          {/* <AppForm<IForm>
-            control={control}
-            name="sektor_usaha"
             label="Sektor Usaha"
-            helperText="Sektor Usaha"
-            rules={{required: 'Silahkan pilih sektor usaha'}}
-            invalid={typeof errors.sektor_usaha?.message !== 'undefined'}
-            required
-            error={errors.sektor_usaha}
-            isPicker
-            pickerData={dataSektorUsaha}
-          /> */}
+            name="sektor_usaha"
+          />
+
+          <ProvinsiPicker<IForm>
+            size="sm"
+            control={control}
+            label="Provinsi"
+            name="provinsi"
+          />
+
+          <KabupatenAtauKotaPicker<IForm>
+            size="sm"
+            control={control}
+            label="Kabupaten / Kota"
+            name="kabupaten_atau_kota"
+            enabled={watch('provinsi') !== undefined}
+            provinsi={watch('provinsi')}
+          />
+
+          <KecamatanPicker<IForm>
+            size="sm"
+            control={control}
+            label="Kecamatan"
+            name="kecamatan"
+            enabled={watch('kabupaten_atau_kota') !== undefined}
+            kabupaten_atau_kota={watch('kabupaten_atau_kota')}
+          />
+
+          <DesaAtauKelurahanPicker<IForm>
+            size="sm"
+            control={control}
+            label="Desa / Kelurahan"
+            name="desa_atau_kelurahan"
+            enabled={watch('kecamatan') !== undefined}
+            kecamatan={watch('kecamatan')}
+          />
           <Button onPress={handleSubmit(onSubmit)}>
             <ButtonText>Kirim</ButtonText>
           </Button>

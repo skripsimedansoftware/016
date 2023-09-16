@@ -21,20 +21,24 @@ type Props<T extends FieldValues> = {
   rules?: RegisterOptions;
   control: Control<T>;
   enabled?: boolean;
+  kabupaten_atau_kota: string | undefined;
 };
 
-const JenisUsahaPicker = <T extends FieldValues>({
+const KecamatanPicker = <T extends FieldValues>({
   size,
   label,
   name,
   rules,
   control,
   enabled,
+  kabupaten_atau_kota,
 }: Props<T>) => {
   const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
   const {request} = useApp();
   const loadData = React.useCallback(() => {
-    request.get('/meta-data/jenis-usaha').then(
+    setLoading(true);
+    request.get('/meta-data/districts/' + kabupaten_atau_kota).then(
       response => {
         if (response.data?.rows) {
           const items = response.data.rows.map(
@@ -45,17 +49,21 @@ const JenisUsahaPicker = <T extends FieldValues>({
             },
           );
           setData(items);
+          setLoading(false);
         }
       },
       err => {
+        setLoading(false);
         console.log(err.response.data);
       },
     );
-  }, [request]);
+  }, [request, kabupaten_atau_kota]);
 
   React.useEffect(() => {
-    loadData();
-  }, [loadData]);
+    if (enabled) {
+      loadData();
+    }
+  }, [loadData, enabled, kabupaten_atau_kota]);
 
   return (
     <FormControl size={size}>
@@ -69,7 +77,7 @@ const JenisUsahaPicker = <T extends FieldValues>({
         render={({field: {onChange, value}}) => {
           return (
             <Picker
-              enabled={enabled || true}
+              enabled={enabled || !loading}
               mode="dialog"
               selectedValue={value}
               onValueChange={itemValue => {
@@ -84,4 +92,4 @@ const JenisUsahaPicker = <T extends FieldValues>({
   );
 };
 
-export default JenisUsahaPicker;
+export default KecamatanPicker;

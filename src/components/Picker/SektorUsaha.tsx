@@ -23,7 +23,7 @@ type Props<T extends FieldValues> = {
   enabled?: boolean;
 };
 
-const JenisUsahaPicker = <T extends FieldValues>({
+const SektorUsahaPicker = <T extends FieldValues>({
   size,
   label,
   name,
@@ -34,7 +34,7 @@ const JenisUsahaPicker = <T extends FieldValues>({
   const [data, setData] = React.useState([]);
   const {request} = useApp();
   const loadData = React.useCallback(() => {
-    request.get('/meta-data/jenis-usaha').then(
+    request.get('/meta-data/sektor-usaha').then(
       response => {
         if (response.data?.rows) {
           const items = response.data.rows.map(
@@ -84,4 +84,4 @@ const JenisUsahaPicker = <T extends FieldValues>({
   );
 };
 
-export default JenisUsahaPicker;
+export default SektorUsahaPicker;
