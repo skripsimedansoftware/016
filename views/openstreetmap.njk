@@ -31,7 +31,12 @@
     const osmTile = new L.TileLayer(osmTileUrl, { minZoom: 4, maxZoom: 20, attribution });
 
     // initialize
-    OpenStreetMap.setView(new L.LatLng(DEFAULT_COORDINATE[0], DEFAULT_COORDINATE[1]), 12);
+	const baseSearchParams = new URLSearchParams(window.location.search);
+	if (baseSearchParams.has('lat') && baseSearchParams.has('lon')) {
+		OpenStreetMap.setView(new L.LatLng(parseFloat(baseSearchParams.get('lat')), parseFloat(baseSearchParams.get('lon'))), 12);
+	} else {
+		OpenStreetMap.setView(new L.LatLng(DEFAULT_COORDINATE[0], DEFAULT_COORDINATE[1]), 12);
+	}
     OpenStreetMap.addLayer(osmTile);
   </script>
   {% block scriptContent %}
