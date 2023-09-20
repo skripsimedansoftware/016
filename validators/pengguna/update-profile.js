@@ -46,26 +46,26 @@ module.exports = [
   body('foto_profil')
     .custom((value, { req }) => {
 	  if (req.file) {
-		const fileExt = mime.getExtension(req.file.mimetype);
-      const imageExtensions = ['jpg', 'jpeg', 'png'];
+        const fileExt = mime.getExtension(req.file.mimetype);
+        const imageExtensions = ['jpg', 'jpeg', 'png'];
 
-      if (req.file) {
-        if (imageExtensions.indexOf(fileExt) !== -1) {
-          fs.renameSync(req.file.path, `${req.file.path}.${fileExt}`);
-          req.file.filename = `${req.file.filename}.${fileExt}`;
-          return true;
+        if (req.file) {
+          if (imageExtensions.indexOf(fileExt) !== -1) {
+            fs.renameSync(req.file.path, `${req.file.path}.${fileExt}`);
+            req.file.filename = `${req.file.filename}.${fileExt}`;
+            return true;
+          }
+
+          fs.rmSync(req.file.path);
+          throw new Error('File harus berupa gambar');
         }
-
-        fs.rmSync(req.file.path);
-        throw new Error('File harus berupa gambar');
-      }
 	  }
 
       return true;
     }),
-	(req, res, next) => {
-		console.log(req.headers)
-		return next();
-	},
+  (req, res, next) => {
+    console.log(req.headers);
+    return next();
+  },
   (req, res, next) => (!validationResult(req).isEmpty() ? next(HTTPErrors.BadRequest('validation')) : next()),
 ];
