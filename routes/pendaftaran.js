@@ -192,7 +192,6 @@ app.post(
           fotocopy_keterangan_usaha: req.files.fotocopy_keterangan_usaha[0].filename,
           fotocopy_izin_usaha: req.files.fotocopy_izin_usaha[0].filename,
           foto_produksi: JSON.stringify(req.files.foto_produksi.map((item) => item.filename)),
-          status: 'pengajuan',
         })
         .then((updated) => res.json(updated), next);
     });
@@ -222,6 +221,7 @@ app.post('/step-5', step5, (req, res, next) => {
       .update({
         latitude: req.body.latitude,
         longitude: req.body.longitude,
+        status: 'pengajuan',
       })
       .then((updated) => res.json(updated), next);
   });
