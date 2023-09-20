@@ -1,5 +1,5 @@
 const express = require('express');
-const { DaftarUsaha, Pengguna } = require('../models');
+const { DaftarUsaha, Pengguna, OmzetUsaha } = require('../models');
 
 const app = express.Router();
 
@@ -33,6 +33,33 @@ app.get('/status/:status', (req, res, next) => {
 
 app.get('/:id', (req, res, next) => {
   DaftarUsaha.findByPk(req.params.id).then((daftarUsaha) => {
+    if (daftarUsaha === null) {
+      return next();
+    }
+
+    return res.json(daftarUsaha);
+  }, next);
+});
+
+app.get('/:id/omzet', (req, res, next) => {
+  DaftarUsaha.findByPk(req.params.id).then((daftarUsaha) => {
+    if (daftarUsaha === null) {
+      return next();
+    }
+
+    return res.json(daftarUsaha);
+  }, next);
+});
+
+app.post('/:id/omzet', (req, res, next) => {
+  DaftarUsaha.findByPk(req.params.id, {
+    include: [
+      {
+        model: OmzetUsaha,
+        as: 'omzet',
+      },
+    ],
+  }).then((daftarUsaha) => {
     if (daftarUsaha === null) {
       return next();
     }
