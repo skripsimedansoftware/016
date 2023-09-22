@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
   class DaftarUsaha extends Model {
     static associate(models) {
       this.belongsTo(models.Pengguna, { as: 'pengusaha', foreignKey: 'owner', targetKey: 'id' });
-      this.hasMany(models.OmzetUsaha, { as: 'omzet' });
+      this.hasMany(models.OmzetUsaha, { as: 'omzet', foreignKey: 'usaha_id' });
     }
   }
 

@@ -11,7 +11,7 @@ app.get('/', (req, res, next) => {
     include: [
       {
         model: Pengguna,
-        as: 'owner',
+        as: 'pengusaha',
       },
     ],
   }).then(({ count, rows }) => res.json({ count, rows }), next);

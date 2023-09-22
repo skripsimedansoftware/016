@@ -76,27 +76,31 @@ app.post('/sign-in', signInValidation, (req, res, next) => {
 
 app.get('/validate-token', async (req, res, next) => {
   try {
-    await JWTVerify(req.header('authorization').replace('Bearer', '').trim());
-    const decodedJWT = JWTDecode(req.header('authorization'));
-    return Pengguna.findByPk(decodedJWT.id).then(async (pengguna) => {
-      const response = {
-        id: pengguna.id,
-        nik: pengguna.nik,
-        email: pengguna.email,
-        username: pengguna.username,
-        nama_lengkap: pengguna.nama_lengkap,
-        foto_profil: pengguna.foto_profil,
-        jabatan: pengguna.jabatan,
-      };
+    if (req.header('authorization')) {
+		await JWTVerify(req.header('authorization').replace('Bearer', '').trim());
+		const decodedJWT = JWTDecode(req.header('authorization'));
+		return Pengguna.findByPk(decodedJWT.id).then(async (pengguna) => {
+		  const response = {
+			id: pengguna.id,
+			nik: pengguna.nik,
+			email: pengguna.email,
+			username: pengguna.username,
+			nama_lengkap: pengguna.nama_lengkap,
+			foto_profil: pengguna.foto_profil,
+			jabatan: pengguna.jabatan,
+		  };
 
-      const token = await JWTEncode(response);
+		  const token = await JWTEncode(response);
 
-      // authenticated
-      return res.json({
-        pengguna: response,
-        token,
-      });
-    }, next);
+		  // authenticated
+		  return res.json({
+			pengguna: response,
+			token,
+		  });
+		}, next);
+	}
+	
+	return next();
   } catch (e) {
     if (e.code === 'ERR_JWT_EXPIRED') {
       const decodedJWT = JWTDecode(req.header('authorization'));

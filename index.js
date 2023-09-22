@@ -64,6 +64,18 @@ app.use('/daftar-usaha', daftarUsahaRouter);
 app.use('/meta-data', metaDataRouter);
 app.use('/pendaftaran', pendaftaranRouter);
 app.use('/pengguna', penggunaRouter);
+app.get('/chart/:idUsaha', async (req, res) => {
+  const data = await models.DaftarUsaha.findByPk(req.params.idUsaha, {
+    include: [
+      {
+        model: models.OmzetUsaha,
+        as: 'omzet',
+      },
+    ],
+  });
+  console.log(data);
+  res.render('chart', data);
+});
 app.get('/open-street-map-1', async (req, res) => {
   const data = await models.DaftarUsaha.findAll({
     include: [
@@ -77,7 +89,6 @@ app.get('/open-street-map-1', async (req, res) => {
     data: JSON.stringify(data),
   });
 });
-
 app.get('/open-street-map-2', async (req, res) => res.render('openstreetmap-2'));
 
 app.use((req, res, next) => next(HTTPErrors.NotFound('Halaman tidak ditemukan')));

@@ -141,9 +141,10 @@ app.post('/step-3', pendaftaran.step3, (req, res, next) => {
 
     return pengguna.usaha
       .update({
-        fotocopy_keterangan_usaha: req.files.fotocopy_keterangan_usaha[0].filename,
-        fotocopy_izin_usaha: req.files.fotocopy_izin_usaha[0].filename,
-        foto_produksi: JSON.stringify(req.files.foto_produksi.map((item) => item.filename)),
+        nama: req.body.nama,
+        produk: req.body.produk,
+        detail_usaha: req.body.detail_usaha,
+        alamat: req.body.alamat,
       })
       .then((updated) => res.json(updated), next);
   });
