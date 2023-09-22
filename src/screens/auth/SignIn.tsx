@@ -60,7 +60,6 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
   const toast = useToast();
 
   const onSubmit = (data: IForm) => {
-    console.log(data);
     signIn(data.identity, data.password).then(success => {
       if (!success) {
         toast.show({
