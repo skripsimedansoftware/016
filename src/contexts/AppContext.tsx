@@ -1,12 +1,13 @@
 import React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, {AxiosError, AxiosInstance} from 'axios';
+import {AppRole} from '@/interfaces/App';
 
 type IAuthInfo = {
   id: number;
   nik: string;
   email: string;
-  jabatan: string;
+  jabatan: AppRole;
   username: string;
   nama_lengkap: string;
   foto_profil: string | null;

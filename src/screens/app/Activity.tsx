@@ -8,23 +8,22 @@ import {
   Text,
   VStack,
 } from '@gluestack-ui/themed';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 import {useApp} from '@/contexts/AppContext';
 import ListEmptyItem from '@/components/ListEmptyItem';
-import {IDaftarUsaha} from '@/interfaces/App';
+import {AppRole, IDaftarUsaha} from '@/interfaces/App';
 
 type RenderItemProp = {
   item: IDaftarUsaha;
-  jabatan: string;
-  statusChange: (status: string) => void;
+  jabatan: AppRole;
 };
-const RenderItem: React.FC<RenderItemProp> = ({
-  item,
-  jabatan,
-  statusChange,
-}) => {
-  const {request} = useApp();
-  const [loading, setLoading] = React.useState<boolean>(false);
-
+const RenderItem: React.FC<RenderItemProp> = ({item, jabatan}) => {
+  const navigation =
+    useNavigation<
+      NativeStackNavigationProp<AppStackNavigatorParams, 'Activity'>
+    >();
   return (
     <Box borderWidth={1} borderColor="$red400" p={10}>
       {jabatan === 'admin' && (
@@ -42,46 +41,27 @@ const RenderItem: React.FC<RenderItemProp> = ({
             mb={'auto'}
             mr={'auto'}
             w={'$1/4'}
-            // borderWidth={1}
             space="sm">
             <Button
               size="xs"
               bgColor="$red600"
-              isDisabled={loading}
-              onPress={() => {
-                setLoading(true);
-                request
-                  .get(`/daftar-usaha/${item.id}/set-status/perbaikan`)
-                  .then(
-                    () => {
-                      setLoading(false);
-                      statusChange('perbaikan');
-                    },
-                    () => {
-                      setLoading(false);
-                      statusChange('perbaikan');
-                    },
-                  );
-              }}>
+              onPress={() =>
+                navigation.navigate('ActivityDetail', {
+                  viewAs: jabatan,
+                  usaha: item,
+                })
+              }>
               <ButtonText>Reject</ButtonText>
             </Button>
             <Button
               size="xs"
               bgColor="$green600"
-              isDisabled={loading}
-              onPress={() => {
-                setLoading(true);
-                request.get(`/daftar-usaha/${item.id}/set-status/aktif`).then(
-                  () => {
-                    setLoading(false);
-                    statusChange('aktif');
-                  },
-                  () => {
-                    setLoading(false);
-                    statusChange('aktif');
-                  },
-                );
-              }}>
+              onPress={() =>
+                navigation.navigate('ActivityDetail', {
+                  viewAs: jabatan,
+                  usaha: item,
+                })
+              }>
               <ButtonText>Accept</ButtonText>
             </Button>
           </VStack>
@@ -117,14 +97,7 @@ const ActivityScreen = () => {
           <RenderItem
             key={props.index}
             item={props.item}
-            jabatan={authInfo?.jabatan as string}
-            statusChange={status => 
-              if (status === 'perbaikan') {
-                // masukkan pesan info perbaikan
-              }
-
-              delete data[props.index];
-            }}
+            jabatan={authInfo?.jabatan as AppRole}
           />
         )}
         ListEmptyComponent={ListEmptyItem}

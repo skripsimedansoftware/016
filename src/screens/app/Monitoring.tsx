@@ -33,10 +33,10 @@ const Item: React.FC<{data: IDaftarUsaha}> = ({data}) => {
       alignItems="center"
       padding={10}>
       <VStack>
-        <Text>Nama Usaha</Text>
+        <Text>{data.nama}</Text>
       </VStack>
       <VStack>
-        <Text>Asset</Text>
+        <Text>{data.produk}</Text>
       </VStack>
       <VStack>
         <Text>Omzetx</Text>

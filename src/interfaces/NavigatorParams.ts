@@ -1,5 +1,5 @@
 import type {ImageSourcePropType} from 'react-native';
-import {IDaftarUsaha} from './App';
+import {AppRole, IDaftarUsaha} from './App';
 
 export type AuthStackParams = {
   SignIn: undefined;
@@ -14,6 +14,7 @@ export type AppStackNavigatorParams = {
   UserProfile: {id: number | string};
   Report: undefined;
   Activity: undefined;
+  ActivityDetail: {viewAs: AppRole; usaha?: IDaftarUsaha};
   Settings:
     | {
         part?: 'jenis-usaha' | 'sektor-usaha' | 'informasi' | 'banner';
