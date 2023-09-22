@@ -3,6 +3,11 @@ import {
   FormControl,
   FormControlLabel,
   FormControlLabelText,
+  Toast,
+  ToastDescription,
+  ToastTitle,
+  VStack,
+  useToast,
 } from '@gluestack-ui/themed';
 import {
   Control,
@@ -33,6 +38,7 @@ const JenisUsahaPicker = <T extends FieldValues>({
 }: Props<T>) => {
   const [data, setData] = React.useState([]);
   const {request} = useApp();
+  const toast = useToast();
   const loadData = React.useCallback(() => {
     request.get('/meta-data/jenis-usaha').then(
       response => {
@@ -47,11 +53,27 @@ const JenisUsahaPicker = <T extends FieldValues>({
           setData(items);
         }
       },
-      err => {
-        console.log(err.response.data);
+      () => {
+        toast.show({
+          placement: 'bottom',
+          render: () => {
+            return (
+              <Toast w={'$1/2'} bgColor="red">
+                <VStack space="xs">
+                  <ToastTitle fontWeight="bold" color="white">
+                    Error
+                  </ToastTitle>
+                  <ToastDescription color="white">
+                    Terjadi kesalahan
+                  </ToastDescription>
+                </VStack>
+              </Toast>
+            );
+          },
+        });
       },
     );
-  }, [request]);
+  }, [request, toast]);
 
   React.useEffect(() => {
     loadData();

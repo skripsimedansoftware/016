@@ -103,7 +103,23 @@ const RegistrationStep1 = () => {
         },
         error => {
           if (typeof error.response !== 'undefined') {
-            console.log(error.response.data);
+            toast.show({
+              placement: 'bottom',
+              render: () => {
+                return (
+                  <Toast w={width - 40} bgColor="red">
+                    <VStack space="xs">
+                      <ToastTitle fontWeight="bold" color="white">
+                        Error
+                      </ToastTitle>
+                      <ToastDescription color="white">
+                        Terjadi kesalahan
+                      </ToastDescription>
+                    </VStack>
+                  </Toast>
+                );
+              },
+            });
           } else {
             toast.show({
               placement: 'bottom',

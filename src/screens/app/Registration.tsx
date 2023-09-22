@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, useWindowDimensions} from 'react-native';
+import {useWindowDimensions} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 import {
@@ -9,20 +9,25 @@ import {
   HStack,
   Heading,
   VStack,
+  Text,
 } from '@gluestack-ui/themed';
+import {useAsyncStorage} from '@react-native-async-storage/async-storage';
 import RegistrationStep1 from '../registration/Step-1';
 import RegistrationStep2 from '../registration/Step-2';
 import RegistrationStep3 from '../registration/Step-3';
-import {useAsyncStorage} from '@react-native-async-storage/async-storage';
+import RegistrationStep4 from '../registration/Step-4';
+import RegistrationStep5 from '../registration/Step-5';
 
 type Props = NativeStackScreenProps<AppStackNavigatorParams, 'Registration'>;
 
 const RegistrationScreen: React.FC<Props> = ({route, navigation}) => {
   const {height, width} = useWindowDimensions();
   const savedState = useAsyncStorage('registration');
+
   React.useEffect(() => {
     savedState.getItem().then(lastState => {
       if (lastState !== null && !route.params?.step) {
+        // Check registration status pending
         navigation.setParams({step: parseFloat(lastState)});
       }
     });
@@ -40,11 +45,9 @@ const RegistrationScreen: React.FC<Props> = ({route, navigation}) => {
     case 3:
       return <RegistrationStep3 />;
     case 4:
-      return (
-        <View>
-          <Text>RegistrationScreen {route.params.step}</Text>
-        </View>
-      );
+      return <RegistrationStep4 />;
+    case 5:
+      return <RegistrationStep5 />;
     default:
       return (
         <Box
@@ -56,7 +59,7 @@ const RegistrationScreen: React.FC<Props> = ({route, navigation}) => {
           <HStack mb={height / 6}>
             <VStack space="md">
               <Heading>Registrasi Usaha</Heading>
-              <Text>Silahkan registrasi</Text>
+              <Text>Silahkan lakukan registrasi di lokasi usaha anda</Text>
               <Button onPress={() => navigation.setParams({step: 1})}>
                 <ButtonText>Lanjutkan</ButtonText>
               </Button>

@@ -1,4 +1,5 @@
 import type {ImageSourcePropType} from 'react-native';
+import {IDaftarUsaha} from './App';
 
 export type AuthStackParams = {
   SignIn: undefined;
@@ -19,10 +20,10 @@ export type AppStackNavigatorParams = {
       }
     | undefined;
   Monitoring: undefined;
-  MonitoringDetail: undefined;
+  MonitoringDetail: {data: IDaftarUsaha};
   Registration: {step: 1 | 2 | 3 | 4 | string | number} | undefined;
   ImagePreview: {image: ImageSourcePropType};
-  OpenStreetMap: {version: 1 | 2};
+  OpenStreetMap: {version: 1 | 2; query?: {lat: number; lon: number}};
 };
 
 export type TabNavigatorParams = {

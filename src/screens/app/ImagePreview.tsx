@@ -8,17 +8,6 @@ type Props = NativeStackScreenProps<AppStackNavigatorParams, 'ImagePreview'>;
 
 const ImagePreview: React.FC<Props> = ({route, navigation}) => {
   const backActionHandler = React.useCallback(() => {
-    console.log('BACKHANDLER');
-    // const reset = navigation.reset({
-    //   index: 0,
-    //   routes: [
-    //     {
-    //       name: 'ImagePreview',
-    //       params: undefined,
-    //     },
-    //   ],
-    // });
-    // console.log({reset});
     navigation.getParent()?.navigate('Account');
     return true;
   }, [navigation]);

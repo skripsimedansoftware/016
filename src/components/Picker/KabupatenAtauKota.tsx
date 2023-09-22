@@ -3,6 +3,11 @@ import {
   FormControl,
   FormControlLabel,
   FormControlLabelText,
+  Toast,
+  ToastDescription,
+  ToastTitle,
+  VStack,
+  useToast,
 } from '@gluestack-ui/themed';
 import {
   Control,
@@ -36,6 +41,7 @@ const KabupatenAtauKotaPicker = <T extends FieldValues>({
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState<boolean>(false);
   const {request} = useApp();
+  const toast = useToast();
   const loadData = React.useCallback(() => {
     setLoading(true);
     request.get('/meta-data/regencies/' + provinsi).then(
@@ -52,12 +58,28 @@ const KabupatenAtauKotaPicker = <T extends FieldValues>({
           setLoading(false);
         }
       },
-      err => {
+      () => {
         setLoading(false);
-        console.log(err.response.data);
+        toast.show({
+          placement: 'bottom',
+          render: () => {
+            return (
+              <Toast w={'$1/2'} bgColor="red">
+                <VStack space="xs">
+                  <ToastTitle fontWeight="bold" color="white">
+                    Error
+                  </ToastTitle>
+                  <ToastDescription color="white">
+                    Terjadi kesalahan
+                  </ToastDescription>
+                </VStack>
+              </Toast>
+            );
+          },
+        });
       },
     );
-  }, [request, provinsi]);
+  }, [request, provinsi, toast]);
 
   React.useEffect(() => {
     if (enabled) {

@@ -1,10 +1,17 @@
 import React from 'react';
 import {Box, Text} from '@gluestack-ui/themed';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 
-const MonitoringDetailScreen = () => {
+type Props = NativeStackScreenProps<
+  AppStackNavigatorParams,
+  'MonitoringDetail'
+>;
+
+const MonitoringDetailScreen: React.FC<Props> = ({route}) => {
   return (
     <Box flex={1}>
-      <Text>Detail Usaha Mau Ditampilkan Apa Aja</Text>
+      <Text>{route.params.data.alamat}</Text>
     </Box>
   );
 };

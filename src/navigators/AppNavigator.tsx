@@ -26,6 +26,7 @@ const AppNavigator = () => {
     isAuthenticated,
     isAuthenticating,
     setAuthInfo,
+    setAuthToken,
     setIsAuthenticated,
     setIsAuthenticating,
     request,
@@ -46,8 +47,8 @@ const AppNavigator = () => {
           })
           .then(
             ({data}) => {
-              console.log({data});
               setAuthInfo(data.pengguna);
+              setAuthToken(data.token);
               setIsAuthenticated(true);
               setIsAuthenticating(false);
             },

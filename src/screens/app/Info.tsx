@@ -13,7 +13,6 @@ const InfoScreen: React.FC<Props> = () => {
   React.useEffect(() => {
     request.head('/meta-data/info').then(
       response => {
-        console.log(response.data);
         setInfo(response.data);
       },
       error => {

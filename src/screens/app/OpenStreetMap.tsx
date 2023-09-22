@@ -11,7 +11,11 @@ const OpenStreetMap: React.FC<Props> = ({route}) => {
   return (
     <WebView
       source={{
-        uri: `${request.getUri()}/open-street-map-${route.params.version}`,
+        uri: `${request.getUri()}/open-street-map-${route.params.version}${
+          route.params.query
+            ? `?lat=${route.params.query.lat}&lon=${route.params.query.lon}`
+            : undefined
+        }`,
       }}
     />
   );
