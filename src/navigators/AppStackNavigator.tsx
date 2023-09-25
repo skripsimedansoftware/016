@@ -13,6 +13,7 @@ import Header from '@/components/Header';
 import UserProfileScreen from '@/screens/user/Profile';
 import MonitoringDetailScreen from '@/screens/app/MonitoringDetail';
 import TabNavigator from './TabNavigator';
+import ActivityDetailScreen from '@/screens/app/ActivityDetail';
 
 const AppStack = createNativeStackNavigator<AppStackNavigatorParams>();
 
@@ -36,6 +37,7 @@ const AppStackNavigator = () => {
       <AppStack.Screen name="UserProfile" component={UserProfileScreen} />
       <AppStack.Screen name="Report" component={ReportScreen} />
       <AppStack.Screen name="Activity" component={ActivityScreen} />
+      <AppStack.Screen name="ActivityDetail" component={ActivityDetailScreen} />
       <AppStack.Screen name="Settings" component={SettingsScreeen} />
       <AppStack.Screen name="Monitoring" component={MonitoringScreen} />
       <AppStack.Screen

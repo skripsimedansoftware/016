@@ -24,7 +24,7 @@ import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 interface IForm {
   fotocopy_keterangan_usaha: string;
   fotocopy_izin_usaha: string;
-  foto_produksi: string[];
+  foto_produksi: string;
 }
 
 type NavigationProps = NativeStackNavigationProp<
@@ -42,7 +42,7 @@ const RegistrationStep4 = () => {
     defaultValues: {
       fotocopy_keterangan_usaha: '',
       fotocopy_izin_usaha: '',
-      foto_produksi: [],
+      foto_produksi: '',
     },
   });
   const {request} = useApp();
@@ -58,9 +58,13 @@ const RegistrationStep4 = () => {
     const fotocopyIzinUsaha = await FileSystem.getInfoAsync(
       data?.fotocopy_izin_usaha,
     );
-    const fotoProduksi = data?.foto_produksi.map(async item => {
-      return await FileSystem.getInfoAsync(item);
-    });
+    const listFotoProduksi: string[] =
+      data?.foto_produksi as unknown as string[];
+    const fotoProduksi: FileSystem.FileInfo[] = await Promise.all(
+      listFotoProduksi.map((item: string) => {
+        return FileSystem.getInfoAsync(item);
+      }),
+    );
 
     // Fotocopy keterangan usaha
     if (fotocopyKeteranganUsaha.exists) {
@@ -90,7 +94,7 @@ const RegistrationStep4 = () => {
       if (file.exists) {
         formData.append('foto_produksi', {
           uri: file.uri,
-          name: `fotocopy_npwp.${mime.getExtension(file.uri)}`,
+          name: `foto_produksi.${mime.getExtension(file.uri)}`,
           type: mime.getType(file.uri) as string,
         });
       }
@@ -181,9 +185,9 @@ const RegistrationStep4 = () => {
             <AppForm
               control={control}
               name="fotocopy_izin_usaha"
-              label="Scan KTP"
-              helperText="Scan KTP"
-              rules={{required: 'Silahkan pilih file scan KTP Anda'}}
+              label="Scan Izin Usaha"
+              helperText="Scan Izin Usaha"
+              rules={{required: 'Silahkan pilih file scan Izin Usaha Anda'}}
               invalid={typeof errors.fotocopy_izin_usaha?.type !== 'undefined'}
               required
               error={errors.fotocopy_izin_usaha}
@@ -196,6 +200,21 @@ const RegistrationStep4 = () => {
                 size="md"
               />
             )}
+          </HStack>
+          <HStack alignContent="center" justifyContent="space-evenly">
+            <AppForm
+              control={control}
+              name="foto_produksi"
+              label="Foto Produksi"
+              helperText="Foto Produksi"
+              rules={{required: 'Silahkan pilih file Foto Produksi Anda'}}
+              invalid={typeof errors.foto_produksi?.type !== 'undefined'}
+              required
+              error={errors.foto_produksi}
+              isFile
+              isMultiple={true}
+              isImage
+            />
           </HStack>
           <Button onPress={handleSubmit(onSubmit)}>
             <ButtonText>Kirim</ButtonText>

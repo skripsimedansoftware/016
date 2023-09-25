@@ -25,7 +25,7 @@ const RenderItem: React.FC<RenderItemProp> = ({item, jabatan}) => {
       NativeStackNavigationProp<AppStackNavigatorParams, 'Activity'>
     >();
   return (
-    <Box borderWidth={1} borderColor="$red400" p={10}>
+    <Box borderWidth={1} borderTopWidth={0} borderColor="$red400" p={10}>
       {jabatan === 'admin' && (
         <HStack space="sm">
           <Box justifyContent="center" w={'$1/3'}>
@@ -44,25 +44,14 @@ const RenderItem: React.FC<RenderItemProp> = ({item, jabatan}) => {
             space="sm">
             <Button
               size="xs"
-              bgColor="$red600"
+              bgColor="$blue600"
               onPress={() =>
                 navigation.navigate('ActivityDetail', {
                   viewAs: jabatan,
                   usaha: item,
                 })
               }>
-              <ButtonText>Reject</ButtonText>
-            </Button>
-            <Button
-              size="xs"
-              bgColor="$green600"
-              onPress={() =>
-                navigation.navigate('ActivityDetail', {
-                  viewAs: jabatan,
-                  usaha: item,
-                })
-              }>
-              <ButtonText>Accept</ButtonText>
+              <ButtonText>Detail</ButtonText>
             </Button>
           </VStack>
         </HStack>

@@ -28,10 +28,12 @@ const RegistrationScreen: React.FC<Props> = ({route, navigation}) => {
     savedState.getItem().then(lastState => {
       if (lastState !== null && !route.params?.step) {
         // Check registration status pending
-        navigation.setParams({step: parseFloat(lastState)});
+        if (!Number.isNaN(parseFloat(lastState))) {
+          navigation.setParams({step: parseFloat(lastState)});
+        }
       }
     });
-  }, [savedState, route, navigation]);
+  }, [savedState, route.params, navigation]);
 
   if (route.params?.step) {
     savedState.setItem(route.params.step.toString());

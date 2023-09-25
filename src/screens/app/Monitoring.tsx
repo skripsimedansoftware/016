@@ -27,11 +27,7 @@ const Item: React.FC<{data: IDaftarUsaha}> = ({data}) => {
       NativeStackNavigationProp<AppStackNavigatorParams, 'Monitoring'>
     >();
   return (
-    <HStack
-      borderWidth={1}
-      justifyContent="space-between"
-      alignItems="center"
-      padding={10}>
+    <HStack borderWidth={1} space="md" alignItems="center" padding={10}>
       <VStack>
         <Text>{data.nama}</Text>
       </VStack>

@@ -11,16 +11,23 @@ const InfoScreen: React.FC<Props> = () => {
   const {request} = useApp();
 
   React.useEffect(() => {
-    request.head('/meta-data/info').then(
-      response => {
-        setInfo(response.data);
-      },
-      error => {
-        if (!error.response) {
-          // no response
-        }
-      },
-    );
+    request
+      .head('/meta-data/info', {
+        headers: {
+          'Content-Type': 'text/html',
+        },
+      })
+      .then(
+        response => {
+          console.log('resinfo', response);
+          setInfo(response.data);
+        },
+        error => {
+          if (!error.response) {
+            // no response
+          }
+        },
+      );
   }, [request]);
 
   return (

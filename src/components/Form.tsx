@@ -84,7 +84,8 @@ const AppForm = <T extends FieldValues>({
       size={size}
       isInvalid={invalid || false}
       isRequired={required || false}
-      shadowRadius={20}>
+      shadowRadius={20}
+      borderWidth={1}>
       <FormControlLabel>
         <FormControlLabelText fontWeight="bold">{label}</FormControlLabelText>
       </FormControlLabel>
@@ -96,7 +97,7 @@ const AppForm = <T extends FieldValues>({
           return isFile ? (
             <Button
               size="sm"
-              w={140}
+              w={'$full'}
               onPress={async () => {
                 let result;
                 if (isImage) {

@@ -72,7 +72,7 @@ const RegistrationStep2 = () => {
       },
       error => {
         if (typeof error.response !== 'undefined') {
-          console.log(error.response.data);
+          //
         } else {
           toast.show({
             placement: 'bottom',

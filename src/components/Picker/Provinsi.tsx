@@ -47,8 +47,8 @@ const ProvinsiPicker = <T extends FieldValues>({
           setData(items);
         }
       },
-      err => {
-        console.log(err.response.data);
+      () => {
+        //
       },
     );
   }, [request]);

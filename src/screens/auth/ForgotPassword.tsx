@@ -50,7 +50,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({navigation}) => {
   });
 
   const onSubmit = (data: IForm) => {
-    console.log(data.identity);
+    console.log(data);
   };
 
   return (

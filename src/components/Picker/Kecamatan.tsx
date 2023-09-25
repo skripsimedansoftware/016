@@ -52,9 +52,8 @@ const KecamatanPicker = <T extends FieldValues>({
           setLoading(false);
         }
       },
-      err => {
+      () => {
         setLoading(false);
-        console.log(err.response.data);
       },
     );
   }, [request, kabupaten_atau_kota]);

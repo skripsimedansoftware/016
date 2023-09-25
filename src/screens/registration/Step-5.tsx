@@ -83,7 +83,7 @@ const RegistrationStep5 = () => {
     // Send request
     request.post('/pendaftaran/step-5', data).then(
       () => {
-        navigation.setParams({step: undefined});
+        navigation.setParams({step: 'none'});
         navigation.navigate('Report');
       },
       error => {
