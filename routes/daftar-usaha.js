@@ -70,12 +70,13 @@ app.post('/:id/omzet', (req, res, next) => {
 
 app.get('/:id/set-status/:status', (req, res, next) => {
   const { status } = req.params;
+  const { catatan } = req.query;
   DaftarUsaha.findByPk(req.params.id).then((daftarUsaha) => {
     if (daftarUsaha === null) {
       return next();
     }
 
-    return daftarUsaha.update({ status }).then((updated) => res.json(updated), next);
+    return daftarUsaha.update({ catatan, status }).then((updated) => res.json(updated), next);
   }, next);
 });
 

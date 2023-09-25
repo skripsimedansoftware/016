@@ -46,7 +46,7 @@ module.exports = [
       const imageExtensions = ['jpg', 'jpeg', 'png'];
 
       if (req.files?.foto_produksi) {
-        req.files.foto_produksi.map((item) => {
+        return req.files.foto_produksi.map((item) => {
           const fileExt = mime.getExtension(item.mimetype);
           if (imageExtensions.indexOf(fileExt) !== -1) {
             fs.renameSync(item.path, `${item.path}.${fileExt}`);
@@ -61,5 +61,10 @@ module.exports = [
 
       throw new Error('Pilih berkas foto produksi usaha Anda');
     }),
+  (req, res, next) => {
+    console.log(req.files);
+    console.log(validationResult(req).array());
+    next();
+  },
   (req, res, next) => (!validationResult(req).isEmpty() ? next(HTTPErrors.BadRequest('validation')) : next()),
 ];
