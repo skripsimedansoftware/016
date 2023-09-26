@@ -84,7 +84,7 @@ const RegistrationStep5 = () => {
     request.post('/pendaftaran/step-5', data).then(
       () => {
         navigation.setParams({step: 'none'});
-        navigation.navigate('Report');
+        navigation.popToTop();
       },
       error => {
         if (typeof error.response !== 'undefined') {

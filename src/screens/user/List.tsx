@@ -21,7 +21,7 @@ import {
 import Icon from '@expo/vector-icons/Ionicons';
 import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 import {useApp} from '@/contexts/AppContext';
-import {UserObject} from '@/interfaces/App';
+import {IUser} from '@/interfaces/App';
 import LottieLoader from '@/components/LottieLoader';
 
 type ScreenProps = NativeStackScreenProps<AppStackNavigatorParams, 'Users'>;
@@ -32,7 +32,7 @@ type NavigationProps = NativeStackNavigationProp<
 >;
 
 type ItemProps = {
-  user: UserObject;
+  user: IUser;
   navigation: NavigationProps;
 };
 

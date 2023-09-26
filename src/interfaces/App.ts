@@ -4,7 +4,7 @@ export enum AppRole {
   pengusaha = 'pengusaha',
 }
 
-export interface UserObject {
+export interface IUser {
   id: number;
   nik: string;
   email: string;
@@ -43,5 +43,15 @@ export interface IDaftarUsaha {
   created_at: string;
   updated_at: string;
   owner: number;
-  pengusaha?: UserObject;
+  pengusaha?: IUser;
+}
+
+export interface IAssetOmzet {
+  id: number;
+  tahun: number;
+  omzet: number;
+  asset: string;
+  created_at: string;
+  updated_at: string;
+  usaha_id: number;
 }

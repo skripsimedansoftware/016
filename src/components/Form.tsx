@@ -94,6 +94,7 @@ const AppForm = <T extends FieldValues>({
         rules={rules}
         control={control}
         render={({field: {onBlur, onChange, value}}) => {
+          console.log({isMultiple});
           return isFile ? (
             <Button
               size="sm"
@@ -105,6 +106,7 @@ const AppForm = <T extends FieldValues>({
                     await ImagePicker.launchImageLibraryAsync({
                       mediaTypes: ImagePicker.MediaTypeOptions.Images,
                       quality: 1,
+                      allowsMultipleSelection: isMultiple,
                     });
 
                   if (!canceled) {
@@ -116,7 +118,7 @@ const AppForm = <T extends FieldValues>({
                   }
                 } else {
                   result = DocumentPicker.getDocumentAsync({
-                    multiple: false,
+                    multiple: isMultiple,
                   });
                 }
 

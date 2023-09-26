@@ -9,30 +9,54 @@ import {
   VStack,
 } from '@gluestack-ui/themed';
 import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {
+  NativeStackScreenProps,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 import {useApp} from '@/contexts/AppContext';
 import ListEmptyItem from '@/components/ListEmptyItem';
-import {AppRole, IDaftarUsaha} from '@/interfaces/App';
+import {AppRole, IAssetOmzet, IDaftarUsaha} from '@/interfaces/App';
 
-type RenderItemProp = {
+const RenderItem: React.FC<{
   item: IDaftarUsaha;
   jabatan: AppRole;
-};
-const RenderItem: React.FC<RenderItemProp> = ({item, jabatan}) => {
+}> = ({item, jabatan}) => {
   const navigation =
     useNavigation<
       NativeStackNavigationProp<AppStackNavigatorParams, 'Activity'>
     >();
   return (
-    <Box borderWidth={1} borderTopWidth={0} borderColor="$red400" p={10}>
+    <Box borderWidth={0} borderBottomWidth={1} borderColor="$fuchsia600" p={10}>
       {jabatan === 'admin' && (
-        <HStack space="sm">
-          <Box justifyContent="center" w={'$1/3'}>
+        <HStack space="sm" flex={1}>
+          <Box
+            justifyContent="center"
+            w={'$1/5'}
+            borderWidth={0}
+            borderColor="red">
+            <Text>{item.nama}</Text>
+          </Box>
+          <Box
+            justifyContent="center"
+            w={'$1/5'}
+            borderWidth={0}
+            borderTopColor="red">
             <Text>{item.jenis_usaha}</Text>
           </Box>
-          <Box justifyContent="center" w={'$1/3'}>
-            <Text overflow="scroll">{item.jenis_usaha}</Text>
+          <Box
+            justifyContent="center"
+            w={'$1/5'}
+            borderWidth={0}
+            borderTopColor="red">
+            <Text>{item.sektor_usaha}</Text>
+          </Box>
+          <Box
+            justifyContent="center"
+            w={'$1/5'}
+            borderWidth={0}
+            borderTopColor="red">
+            <Text>{item.produk}</Text>
           </Box>
           <VStack
             justifyContent="center"
@@ -40,7 +64,7 @@ const RenderItem: React.FC<RenderItemProp> = ({item, jabatan}) => {
             mt={'auto'}
             mb={'auto'}
             mr={'auto'}
-            w={'$1/4'}
+            borderWidth={0}
             space="sm">
             <Button
               size="xs"
@@ -60,8 +84,22 @@ const RenderItem: React.FC<RenderItemProp> = ({item, jabatan}) => {
   );
 };
 
-const ActivityScreen = () => {
-  const [data, setData] = React.useState<IDaftarUsaha[]>([]);
+const RenderItemAsPengusaha: React.FC<{item: IAssetOmzet}> = ({item}) => {
+  // const navigation =
+  //   useNavigation<
+  //     NativeStackNavigationProp<AppStackNavigatorParams, 'Activity'>
+  //   >();
+  return (
+    <Box borderWidth={0} borderBottomWidth={1} borderColor="$fuchsia600" p={10}>
+      {item.asset}
+    </Box>
+  );
+};
+
+const ActivityScreen: React.FC<
+  NativeStackScreenProps<AppStackNavigatorParams, 'Activity'>
+> = ({}) => {
+  const [data, setData] = React.useState<IDaftarUsaha[] | IAssetOmzet[]>([]);
   const {request, authInfo} = useApp();
 
   React.useEffect(() => {
@@ -75,22 +113,46 @@ const ActivityScreen = () => {
             setData(response.data.rows);
           }
         }, console.log);
+    } else if (authInfo?.jabatan === 'pengusaha') {
+      request
+        .get<{id: number; owner: number}>('/daftar-usaha/mime')
+        .then(daftarUsaha => {
+          if (daftarUsaha.data.id) {
+            request
+              .get<IAssetOmzet[]>(
+                `/daftar-usaha/${daftarUsaha.data.id}/asset-omzet`,
+              )
+              .then(assetOmzet => {
+                setData(assetOmzet.data as IAssetOmzet[]);
+              });
+          }
+        }, console.log);
     }
   }, [request, authInfo]);
 
   return (
     <Box flex={1} borderWidth={0} borderTopColor="black" borderTopWidth={1}>
-      <FlatList
-        data={data}
-        renderItem={props => (
-          <RenderItem
-            key={props.index}
-            item={props.item}
-            jabatan={authInfo?.jabatan as AppRole}
-          />
-        )}
-        ListEmptyComponent={ListEmptyItem}
-      />
+      {authInfo?.jabatan === 'pengusaha' ? (
+        <FlatList
+          data={data as IAssetOmzet[]}
+          renderItem={props => (
+            <RenderItemAsPengusaha key={props.index} item={props.item} />
+          )}
+          ListEmptyComponent={ListEmptyItem}
+        />
+      ) : (
+        <FlatList
+          data={data as IDaftarUsaha[]}
+          renderItem={props => (
+            <RenderItem
+              key={props.index}
+              item={props.item}
+              jabatan={authInfo?.jabatan as AppRole}
+            />
+          )}
+          ListEmptyComponent={ListEmptyItem}
+        />
+      )}
     </Box>
   );
 };

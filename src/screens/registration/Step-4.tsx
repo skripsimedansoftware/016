@@ -60,6 +60,7 @@ const RegistrationStep4 = () => {
     );
     const listFotoProduksi: string[] =
       data?.foto_produksi as unknown as string[];
+    console.log({listFotoProduksi});
     const fotoProduksi: FileSystem.FileInfo[] = await Promise.all(
       listFotoProduksi.map((item: string) => {
         return FileSystem.getInfoAsync(item);
@@ -89,13 +90,13 @@ const RegistrationStep4 = () => {
     }
 
     // Foto produksi
-    fotoProduksi.map(async item => {
-      const file = await item;
-      if (file.exists) {
+    fotoProduksi.map(item => {
+      if (item.exists) {
+        console.log('adafileprfo');
         formData.append('foto_produksi', {
-          uri: file.uri,
-          name: `foto_produksi.${mime.getExtension(file.uri)}`,
-          type: mime.getType(file.uri) as string,
+          uri: item.uri,
+          name: `foto_produksi.${mime.getExtension(item.uri)}`,
+          type: mime.getType(item.uri) as string,
         });
       }
     });

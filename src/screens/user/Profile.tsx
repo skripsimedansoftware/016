@@ -2,7 +2,7 @@ import React from 'react';
 import {useWindowDimensions, TouchableOpacity} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
-import {UserObject} from '@/interfaces/App';
+import {IUser} from '@/interfaces/App';
 import LoadingScreen from '@/screens/app/Loading';
 import {useApp} from '@/contexts/AppContext';
 import {
@@ -24,7 +24,7 @@ const UserProfileScreen: React.FC<Props> = ({route}) => {
   const [previewImage, setPreviewImage] = React.useState<string | boolean>(
     false,
   );
-  const [profile, setProfile] = React.useState<UserObject | null>(null);
+  const [profile, setProfile] = React.useState<IUser | null>(null);
   const {height, width} = useWindowDimensions();
   const {request} = useApp();
 

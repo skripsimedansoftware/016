@@ -20,18 +20,32 @@ import {
   Text,
   VStack,
 } from '@gluestack-ui/themed';
-import {AppRole} from '@/interfaces/App';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import {useApp} from '@/contexts/AppContext';
+import {AppRole} from '@/interfaces/App';
+
+const ItemList: React.FC<{label: string; val: string}> = ({label, val}) => {
+  return (
+    <HStack borderWidth={0.4} py={2}>
+      <VStack w={'$1/2'} borderWidth={0} px={10}>
+        <Text>{label}</Text>
+      </VStack>
+      <VStack w={'$1/2'} justifyContent="center" px={2}>
+        <Text>{val}</Text>
+      </VStack>
+    </HStack>
+  );
+};
 
 const ActivityDetailScreen: React.FC<
   NativeStackScreenProps<AppStackNavigatorParams, 'ActivityDetail'>
-> = ({route}) => {
+> = ({route, navigation}) => {
   const [note, setNote] = React.useState<string>('');
   const {request} = useApp();
+  const [showModal, setShowModal] = React.useState<boolean>(false);
   const [status, setStatus] = React.useState<'perbaikan' | 'aktif' | null>(
     null,
   );
-  const [showModal, setShowModal] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (status === 'perbaikan') {
@@ -41,7 +55,7 @@ const ActivityDetailScreen: React.FC<
 
   if (route.params.viewAs === AppRole.pengusaha) {
     return (
-      <Box>
+      <Box minHeight={'$full'}>
         <Text>(Pengusaha) Activity Detail</Text>
       </Box>
     );
@@ -50,30 +64,9 @@ const ActivityDetailScreen: React.FC<
   return (
     <Box h={'$full'}>
       <VStack borderWidth={1} h={'$full'}>
-        <HStack borderWidth={0.4} py={2}>
-          <VStack w={'$1/2'} borderWidth={0} px={10}>
-            <Text>Nama Usaha</Text>
-          </VStack>
-          <VStack w={'$1/2'} justifyContent="center" px={2}>
-            <Text>{route.params.usaha?.nama}</Text>
-          </VStack>
-        </HStack>
-        <HStack borderWidth={0.4} py={2}>
-          <VStack w={'$1/2'} borderWidth={0} px={10}>
-            <Text>Jenis Usaha</Text>
-          </VStack>
-          <VStack w={'$1/2'} justifyContent="center" px={2}>
-            <Text>{route.params.usaha?.jenis_usaha}</Text>
-          </VStack>
-        </HStack>
-        <HStack borderWidth={0.4} py={2}>
-          <VStack w={'$1/2'} borderWidth={0} px={10}>
-            <Text>Sektor Usaha</Text>
-          </VStack>
-          <VStack w={'$1/2'} justifyContent="center" px={2}>
-            <Text>{route.params.usaha?.sektor_usaha}</Text>
-          </VStack>
-        </HStack>
+        <ItemList label="Nama Usaha" val={route.params.usaha?.nama} />
+        <ItemList label="Jenis Usaha" val={route.params.usaha?.jenis_usaha} />
+        <ItemList label="Sektor Usaha" val={route.params.usaha?.sektor_usaha} />
         <HStack borderWidth={0.4} py={2}>
           <VStack w={'$1/2'} borderWidth={0} px={10}>
             <Text>Produk</Text>
@@ -140,6 +133,17 @@ const ActivityDetailScreen: React.FC<
             bg="$green600"
             onPress={() => {
               setStatus('aktif');
+              request
+                .get(`/daftar-usaha/${route.params.usaha?.id}/set-status/aktif`)
+                .then(
+                  () => {
+                    setStatus(null);
+                    navigation.goBack();
+                  },
+                  () => {
+                    setStatus(null);
+                  },
+                );
             }}>
             <ButtonText>Terima</ButtonText>
           </Button>
@@ -158,12 +162,16 @@ const ActivityDetailScreen: React.FC<
           <ModalContent>
             <ModalHeader>
               <Heading size="lg">Catatan</Heading>
-              <ModalCloseButton>
-                <Text>CLOSE</Text>
+              <ModalCloseButton
+                onPress={() => {
+                  setShowModal(false);
+                  setStatus(null);
+                }}>
+                <Ionicons size={22} name="close-circle" />
               </ModalCloseButton>
             </ModalHeader>
             <ModalBody>
-              <Text px={4}>Masukkan catatan</Text>
+              <Text py={4}>Masukkan catatan</Text>
               <Input>
                 <InputInput
                   type="text"
@@ -184,7 +192,7 @@ const ActivityDetailScreen: React.FC<
                   setShowModal(false);
                   setStatus(null);
                 }}>
-                <ButtonText>Cancel</ButtonText>
+                <ButtonText>Batal</ButtonText>
               </Button>
               <Button
                 size="sm"
@@ -193,12 +201,14 @@ const ActivityDetailScreen: React.FC<
                 onPress={() => {
                   request
                     .get(
-                      `/daftar-usaha/${route.params.id}/set-status/non-aktif`,
+                      `/daftar-usaha/${route.params.usaha?.id}/set-status/non-aktif?catatan=${note}`,
                     )
                     .then(
                       () => {
                         setShowModal(false);
                         setStatus(null);
+                        setNote('');
+                        navigation.goBack();
                       },
                       () => {
                         setShowModal(false);
