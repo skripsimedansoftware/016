@@ -24,7 +24,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import {useApp} from '@/contexts/AppContext';
 import {AppRole} from '@/interfaces/App';
 
-const ItemList: React.FC<{label: string; val: string}> = ({label, val}) => {
+const ItemList: React.FC<{label: string; val: unknown}> = ({label, val}) => {
   return (
     <HStack borderWidth={0.4} py={2}>
       <VStack w={'$1/2'} borderWidth={0} px={10}>

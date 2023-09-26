@@ -46,7 +46,7 @@ const AppProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [isAuthenticating, setIsAuthenticating] =
     React.useState<boolean>(false);
   let request = axios.create({
-    baseURL: 'http://192.168.43.245:3000',
+    baseURL: 'http://103.13.207.48:3000',
     headers: {
       Authorization: authToken ? `Bearer ${authToken}` : undefined,
     },

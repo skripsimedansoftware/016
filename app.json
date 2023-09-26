@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "react-expo-typescript",
-    "slug": "react-expo-typescript",
+    "name": "Monitoring UMKM",
+    "slug": "monitoring-umkm",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -19,7 +19,14 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.FOREGROUND_SERVICE"
+      ],
+      "package": "com.uinsu.monitoringumkm"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -53,6 +60,11 @@
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e2ab1119-70d2-4ed7-b5ba-d7c62c7d366a"
+      }
+    }
   }
 }
