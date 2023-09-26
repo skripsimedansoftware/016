@@ -4,7 +4,7 @@ const express = require('express');
 const HTTPErrors = require('http-errors');
 const multer = require('multer');
 const PDFMake = require('pdfmake');
-const { Pengguna, DaftarUsaha } = require('../models');
+const { Pengguna, DaftarUsaha, OmzetUsaha } = require('../models');
 const { updateProfile } = require('../validators/pengguna');
 
 const app = express.Router();
@@ -89,6 +89,29 @@ app.put('/profile/:id?', upload.single('foto_profil'), updateProfile, (req, res,
 
       return res.json(response);
     }, next);
+  }, next);
+});
+
+app.get('/usaha', (req, res, next) => {
+  Pengguna.findByPk(req.user, {
+    include: [
+      {
+        model: DaftarUsaha,
+        as: 'usaha',
+        include: [
+          {
+            model: OmzetUsaha,
+            as: 'omzet',
+          },
+        ],
+      },
+    ],
+  }).then((user) => {
+    if (user !== null) {
+      return res.json(user);
+    }
+
+    return next();
   }, next);
 });
 

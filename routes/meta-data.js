@@ -11,15 +11,14 @@ const app = express.Router();
 
 const fileInfo = path.join(process.cwd(), 'info');
 
-
 app.get('/info', (req, res, next) => {
   fs.statfs(fileInfo).then(() => fs.readFile(fileInfo).then((info) => {
-	  console.log({info})
-	  console.log(info.toString())
-	  res.send(info.toString())
+    console.log({ info });
+    console.log(info.toString());
+    res.send(info.toString());
   }, () => next()), () => fs.writeFile(fileInfo, '').then((val) => {
-	  console.log({val})
-	  res.send(val)
+    console.log({ val });
+    res.send(val);
   }, () => next()));
 });
 
@@ -30,10 +29,6 @@ app.post('/info', (req, res, next) => {
 app.put('/info', (req, res, next) => {
   fs.writeFile(fileInfo, req.body.data).then(() => res.send(req.body.data), next);
 });
-
-// app.get('/slider', (req, res, next) => {
-
-// });
 
 app.get('/jenis-usaha', (req, res, next) => JenisUsaha.findAndCountAll().then(({ count, rows }) => res.json({ count, rows }), next));
 

@@ -58,7 +58,6 @@ module.exports = [
           throw new Error('File harus berupa gambar');
         });
       }
-
       throw new Error('Pilih berkas foto produksi usaha Anda');
     }),
   (req, res, next) => {
