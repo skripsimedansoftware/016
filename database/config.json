@@ -35,9 +35,9 @@
     }
   },
   "production": {
-    "username": "skripsi-016",
-    "password": "@Skripsi_0162023#",
-    "database": "skripsi-016",
+    "username": "root",
+    "password": null,
+    "database": "umkm-monitoring",
     "host": "127.0.0.1",
     "dialect": "mysql",
     "logging": false,
