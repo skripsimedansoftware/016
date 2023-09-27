@@ -182,7 +182,6 @@ app.get('/print', (req, res, next) => {
       jabatan: 'pengusaha',
     },
   }).then(({ rows }) => {
-    console.log(rows);
     createPdfBinary({
       pageOrientation: 'landscape',
       content: [
@@ -196,7 +195,7 @@ app.get('/print', (req, res, next) => {
         {
           table: {
             // headerRows: 1,
-            widths: [20, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+            widths: [20, 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
             body: [
               [
                 {
@@ -204,8 +203,18 @@ app.get('/print', (req, res, next) => {
                   bold: true,
                   alignment: 'center',
                 },
-                // 'NIK', 'Email', 'Username', 'Nama Lengkap', 'Jabatan',
-                'Nama Usaha', 'Nama Pemilik', 'Alamat Usaha', 'Desa/Kelurahan', 'Kecamatan', 'Kabupaten/Kota', 'Provinsi', 'Sektor Usaha', 'Jenis Usaha', 'Jenis Usaha Detail', 'Produk', 'Tahun Data', 'Omzet Pertahun', 'Asset',
+                'Nama Usaha',
+                'Nama Pemilik',
+                'Alamat Usaha',
+                'Desa/Kelurahan',
+                'Kecamatan',
+                'Kabupaten/Kota',
+                'Provinsi',
+                'Sektor Usaha',
+                'Jenis Usaha',
+                'Jenis Usaha Detail',
+                'Produk',
+                // 'Tahun Data', 'Omzet Pertahun', 'Asset',
               ],
               ...rows.map((item) => [
                 {
@@ -213,20 +222,20 @@ app.get('/print', (req, res, next) => {
                   bold: true,
                   alignment: 'center',
                 },
-                item.usaha !== null ? item.usaha.produk : '-', // Nama usaha
+                item.usaha !== null ? item.usaha.nama : '-', // Nama usaha
                 item.nama_lengkap, // Nama pemilik
-                item.usaha !== null ? item.usaha.produk : '-', // Alamat usaha
-                item.usaha !== null ? item.usaha.produk : '-', // Desa / kelurahan
-                item.usaha !== null ? item.usaha.produk : '-', // Kecamatan
-                item.usaha !== null ? item.usaha.produk : '-', // Kabupaten / kota
-                item.usaha !== null ? item.usaha.produk : '-', // Provinsi
-                item.usaha !== null ? item.usaha.produk : '-', // Sektor usaha
-                item.usaha !== null ? item.usaha.produk : '-', // Jenis usaha
-                item.usaha !== null ? item.usaha.produk : '-', // Jenis usaha detail
+                item.usaha !== null ? item.usaha.alamat : '-', // Alamat usaha
+                item.usaha !== null ? item.usaha.desa_atau_kelurahan : '-', // Desa / kelurahan
+                item.usaha !== null ? item.usaha.kecamatan : '-', // Kecamatan
+                item.usaha !== null ? item.usaha.kabupaten_atau_kota : '-', // Kabupaten / kota
+                item.usaha !== null ? item.usaha.provinsi : '-', // Provinsi
+                item.usaha !== null ? item.usaha.sektor_usaha : '-', // Sektor usaha
+                item.usaha !== null ? item.usaha.jenis_usaha : '-', // Jenis usaha
+                item.usaha !== null ? item.usaha.detail_usaha : '-', // Jenis usaha detail
                 item.usaha !== null ? item.usaha.produk : '-', // Produk
-                item.usaha !== null ? item.usaha.produk : '-', // Tahun data
-                item.usaha !== null ? item.usaha.produk : '-', // Omzet per tahun
-                item.usaha !== null ? item.usaha.produk : '-', // Asset
+                // item.usaha !== null ? item.usaha.produk : '-', // Tahun data
+                // item.usaha !== null ? item.usaha.produk : '-', // Omzet per tahun
+                // item.usaha !== null ? item.usaha.produk : '-', // Asset
               ]),
             ],
           },

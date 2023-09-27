@@ -60,10 +60,5 @@ module.exports = [
       }
       throw new Error('Pilih berkas foto produksi usaha Anda');
     }),
-  (req, res, next) => {
-    console.log(req.files);
-    console.log(validationResult(req).array());
-    next();
-  },
   (req, res, next) => (!validationResult(req).isEmpty() ? next(HTTPErrors.BadRequest('validation')) : next()),
 ];

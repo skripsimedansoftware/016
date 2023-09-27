@@ -73,8 +73,9 @@ app.get('/chart/:idUsaha', async (req, res) => {
       },
     ],
   });
-  console.log(data);
-  res.render('chart', data);
+  // console.log(data);
+  // res.json(data.omzet);
+  res.render('chart', { data: JSON.stringify(data.omzet) });
 });
 app.get('/open-street-map-1', async (req, res) => {
   const data = await models.DaftarUsaha.findAll({

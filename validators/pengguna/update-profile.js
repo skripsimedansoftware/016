@@ -63,9 +63,5 @@ module.exports = [
 
       return true;
     }),
-  (req, res, next) => {
-    console.log(req.headers);
-    return next();
-  },
   (req, res, next) => (!validationResult(req).isEmpty() ? next(HTTPErrors.BadRequest('validation')) : next()),
 ];

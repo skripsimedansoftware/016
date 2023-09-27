@@ -4,8 +4,57 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UMKM Monitoring</title>
+  <style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        overflow: hidden; /* Menghilangkan overflow agar elemen 100% lebar dan tinggi */
+    }
+
+    canvas {
+        display: block;
+        width: 100vw; /* 100% lebar viewport */
+        height: 100vh; /* 100% tinggi viewport */
+    }
+    </style>
 </head>
 <body>
-  
+  <canvas id="myChart"></canvas>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ambil data JSON
+            var jsonData = JSON.parse(`{{data}}`)
+
+            // Ubah data JSON menjadi format yang dapat digunakan oleh Chart.js
+            var labels = jsonData.map(item => item.tahun);
+            var omzetData = jsonData.map(item => item.omzet);
+
+            // Ambil referensi ke elemen canvas
+            var ctx = document.getElementById('myChart').getContext('2d');
+
+            // Buat objek grafik menggunakan Chart.js
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Omzet Usaha',
+                        data: omzetData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </html>

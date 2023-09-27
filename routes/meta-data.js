@@ -13,11 +13,8 @@ const fileInfo = path.join(process.cwd(), 'info');
 
 app.get('/info', (req, res, next) => {
   fs.statfs(fileInfo).then(() => fs.readFile(fileInfo).then((info) => {
-    console.log({ info });
-    console.log(info.toString());
     res.send(info.toString());
   }, () => next()), () => fs.writeFile(fileInfo, '').then((val) => {
-    console.log({ val });
     res.send(val);
   }, () => next()));
 });
