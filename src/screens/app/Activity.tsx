@@ -111,7 +111,17 @@ const RenderItemAsPengusaha: React.FC<{item: IAssetOmzet}> = ({item}) => {
   //   >();
   return (
     <Box borderWidth={0} borderBottomWidth={1} borderColor="$fuchsia600" p={10}>
-      <Text>{item.asset}</Text>
+      <HStack space="md" p={'$1'}>
+        <Box maxWidth={'$1/3'} minWidth={'$1/3'} justifyContent="center">
+          <Text>{item.asset}</Text>
+        </Box>
+        <Box maxWidth={'$1/3'} minWidth={'$1/3'} justifyContent="center">
+          <Text>{item.omzet}</Text>
+        </Box>
+        <Box maxWidth={'$1/3'} minWidth={'$1/3'} justifyContent="center">
+          <Text>{item.tahun}</Text>
+        </Box>
+      </HStack>
     </Box>
   );
 };
@@ -155,8 +165,8 @@ const ActivityScreen: React.FC<
       request
         .get<{id: number; owner: number}>('/daftar-usaha/mine')
         .then(daftarUsaha => {
-          setUsahaID(daftarUsaha.id);
           if (daftarUsaha.data.id) {
+            setUsahaID(daftarUsaha.data.id);
             request
               .get<IAssetOmzet[]>(
                 `/daftar-usaha/${daftarUsaha.data.id}/asset-omzet`,
