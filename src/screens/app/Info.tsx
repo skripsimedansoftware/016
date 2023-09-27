@@ -19,7 +19,6 @@ const InfoScreen: React.FC<Props> = () => {
       })
       .then(
         response => {
-          console.log('resinfo', response);
           setInfo(response.data);
         },
         error => {

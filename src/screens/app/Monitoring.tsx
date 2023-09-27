@@ -15,9 +15,10 @@ import {
 import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 import {useApp} from '@/contexts/AppContext';
 import {useNavigation} from '@react-navigation/native';
-import {IDaftarUsaha} from '@/interfaces/App';
+import {AppRole, IDaftarUsaha} from '@/interfaces/App';
 import {FlatList} from 'react-native';
 import LottieLoader from '@/components/LottieLoader';
+import ListEmptyItem from '@/components/ListEmptyItem';
 
 type Props = NativeStackScreenProps<AppStackNavigatorParams, 'Monitoring'>;
 
@@ -65,22 +66,38 @@ const Item: React.FC<{data: IDaftarUsaha}> = ({data}) => {
 const ItemSeparatorComponent = () => <Divider />;
 
 const MonitoringScreen: React.FC<Props> = () => {
-  const {request} = useApp();
+  const {request, authInfo} = useApp();
   const [loading, setLoading] = React.useState<boolean>(false);
   const [data, setData] = React.useState<IDaftarUsaha[]>([]);
 
-  React.useEffect(() => {
+  const getData = React.useCallback(async () => {
     setLoading(true);
-    request.get('/daftar-usaha').then(
-      response => {
-        setLoading(false);
-        setData(response.data);
-      },
-      () => {
-        setLoading(false);
-      },
-    );
-  }, [request]);
+    if (authInfo?.jabatan === AppRole.pengusaha) {
+      request.get('/daftar-usaha').then(
+        response => {
+          setLoading(false);
+          setData(response.data);
+        },
+        () => {
+          setLoading(false);
+        },
+      );
+    } else {
+      request.get('/daftar-usaha').then(
+        response => {
+          setLoading(false);
+          setData(response.data);
+        },
+        () => {
+          setLoading(false);
+        },
+      );
+    }
+  }, [authInfo?.jabatan, request]);
+
+  React.useEffect(() => {
+    getData();
+  }, [getData]);
 
   if (loading) {
     return <LottieLoader message="Mengambil data" />;
@@ -92,6 +109,7 @@ const MonitoringScreen: React.FC<Props> = () => {
         data={data}
         renderItem={props => <Item data={props.item} />}
         ItemSeparatorComponent={ItemSeparatorComponent}
+        ListEmptyComponent={<ListEmptyItem message="Data masih kosong" />}
       />
     </Box>
   );

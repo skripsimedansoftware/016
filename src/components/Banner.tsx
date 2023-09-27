@@ -19,7 +19,11 @@ const Banner = () => {
         justifyContent="center"
         alignItems="center">
         <VStack borderWidth={0}>
-          <Image source={require('../../assets/logo.png')} size="lg" />
+          <Image
+            alt="Logo"
+            source={require('../../assets/logo.png')}
+            size="lg"
+          />
         </VStack>
         <VStack borderWidth={0}>
           <Heading fontSize={16} lineHeight={24}>

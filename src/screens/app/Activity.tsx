@@ -4,7 +4,17 @@ import {
   Box,
   Button,
   ButtonText,
+  Fab,
+  FabLabel,
   HStack,
+  Heading,
+  Modal,
+  ModalBackdrop,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Text,
   VStack,
 } from '@gluestack-ui/themed';
@@ -13,10 +23,20 @@ import {
   NativeStackScreenProps,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
+import Icon from '@expo/vector-icons/Ionicons';
 import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 import {useApp} from '@/contexts/AppContext';
 import ListEmptyItem from '@/components/ListEmptyItem';
 import {AppRole, IAssetOmzet, IDaftarUsaha} from '@/interfaces/App';
+import AppForm from '@/components/Form';
+import {useForm} from 'react-hook-form';
+import TahunPicker from '@/components/Picker/Tahun';
+
+interface IFormAssetOmzet {
+  tahun: string;
+  omzet: string;
+  asset: string;
+}
 
 const RenderItem: React.FC<{
   item: IDaftarUsaha;
@@ -91,7 +111,7 @@ const RenderItemAsPengusaha: React.FC<{item: IAssetOmzet}> = ({item}) => {
   //   >();
   return (
     <Box borderWidth={0} borderBottomWidth={1} borderColor="$fuchsia600" p={10}>
-      {item.asset}
+      <Text>{item.asset}</Text>
     </Box>
   );
 };
@@ -99,10 +119,28 @@ const RenderItemAsPengusaha: React.FC<{item: IAssetOmzet}> = ({item}) => {
 const ActivityScreen: React.FC<
   NativeStackScreenProps<AppStackNavigatorParams, 'Activity'>
 > = ({}) => {
-  const [data, setData] = React.useState<IDaftarUsaha[] | IAssetOmzet[]>([]);
-  const {request, authInfo} = useApp();
+  const [dataDaftarUsaha, setDataDaftarUsaha] = React.useState<IDaftarUsaha[]>(
+    [],
+  );
+  const [dataAssetOmzet, setDataAssetOmzet] = React.useState<IAssetOmzet[]>([]);
 
-  React.useEffect(() => {
+  const [showModal, setShowModal] = React.useState<boolean>(false);
+  const [usahaID, setUsahaID] = React.useState<number | null>(null);
+  const {request, authInfo} = useApp();
+  const {
+    control,
+    handleSubmit,
+    // watch,
+    formState: {errors},
+  } = useForm<IFormAssetOmzet>({
+    defaultValues: {
+      tahun: '',
+      asset: '',
+      omzet: '',
+    },
+  });
+
+  const loadData = React.useCallback(() => {
     if (authInfo?.jabatan === 'admin') {
       request
         .get<{count: number; rows: IDaftarUsaha[]}>(
@@ -110,39 +148,140 @@ const ActivityScreen: React.FC<
         )
         .then(response => {
           if (response.data.rows) {
-            setData(response.data.rows);
+            setDataDaftarUsaha(response.data.rows);
           }
         }, console.log);
     } else if (authInfo?.jabatan === 'pengusaha') {
       request
-        .get<{id: number; owner: number}>('/daftar-usaha/mime')
+        .get<{id: number; owner: number}>('/daftar-usaha/mine')
         .then(daftarUsaha => {
+          setUsahaID(daftarUsaha.id);
           if (daftarUsaha.data.id) {
             request
               .get<IAssetOmzet[]>(
                 `/daftar-usaha/${daftarUsaha.data.id}/asset-omzet`,
               )
               .then(assetOmzet => {
-                setData(assetOmzet.data as IAssetOmzet[]);
+                setDataAssetOmzet(assetOmzet.data);
               });
           }
         }, console.log);
     }
   }, [request, authInfo]);
 
+  React.useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const onSubmit = (form: IFormAssetOmzet) => {
+    request
+      .post<IAssetOmzet>(`/daftar-usaha/${usahaID}/asset-omzet`, form)
+      .then(() => {
+        setShowModal(false);
+      }, console.log);
+  };
+
   return (
     <Box flex={1} borderWidth={0} borderTopColor="black" borderTopWidth={1}>
       {authInfo?.jabatan === 'pengusaha' ? (
-        <FlatList
-          data={data as IAssetOmzet[]}
-          renderItem={props => (
-            <RenderItemAsPengusaha key={props.index} item={props.item} />
+        <Box flex={1}>
+          <FlatList
+            data={dataAssetOmzet}
+            renderItem={props => (
+              <RenderItemAsPengusaha key={props.index} item={props.item} />
+            )}
+            ListEmptyComponent={<ListEmptyItem message="Tidak ada aktivitas" />}
+          />
+          {usahaID !== null && (
+            <Fab
+              size="lg"
+              placement="bottom right"
+              isHovered={false}
+              isDisabled={false}
+              isPressed={false}
+              onPress={() => {
+                setShowModal(true);
+              }}>
+              <Icon name="add" size={20} color={'white'} />
+              <FabLabel ml={4}>Asset & Omzet</FabLabel>
+            </Fab>
           )}
-          ListEmptyComponent={ListEmptyItem}
-        />
+          <Modal
+            isOpen={showModal}
+            onClose={() => {
+              setShowModal(false);
+            }}
+            // finalFocusRef={ref}
+          >
+            <ModalBackdrop />
+            <ModalContent>
+              <ModalHeader>
+                <Heading size="lg">Aset & Omzet</Heading>
+                <ModalCloseButton>
+                  <Text>X</Text>
+                </ModalCloseButton>
+              </ModalHeader>
+              <ModalBody>
+                <Text my={'$0.5'}>
+                  Silahkan masukkan nilai aset dan omzet Anda untuk memantau
+                  statistik data tahunan
+                </Text>
+                <AppForm<IFormAssetOmzet>
+                  control={control}
+                  name="asset"
+                  label="Aset"
+                  placeholder="Asset"
+                  helperText="Jelaskan asset anda"
+                  rules={{required: 'Silahkan masukkan aset Anda'}}
+                  invalid={typeof errors.asset?.message !== 'undefined'}
+                  required
+                  error={errors.asset}
+                />
+                <AppForm<IFormAssetOmzet>
+                  control={control}
+                  name="omzet"
+                  label="Omzet"
+                  placeholder="Omzet"
+                  helperText="Masukkan omzet usaha Anda"
+                  rules={{required: 'Silahkan masukkan omzet usaha Anda'}}
+                  invalid={typeof errors.omzet?.message !== 'undefined'}
+                  required
+                  error={errors.omzet}
+                />
+                <TahunPicker<IFormAssetOmzet>
+                  control={control}
+                  label="Tahun"
+                  name="tahun"
+                  rules={{
+                    required: 'Silahkan pilih tahun',
+                  }}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  action="secondary"
+                  mr="$3"
+                  onPress={() => {
+                    setShowModal(false);
+                  }}>
+                  <ButtonText>Batal</ButtonText>
+                </Button>
+                <Button
+                  size="sm"
+                  action="positive"
+                  borderWidth="$0"
+                  onPress={handleSubmit(onSubmit)}>
+                  <ButtonText>Simpan</ButtonText>
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </Box>
       ) : (
         <FlatList
-          data={data as IDaftarUsaha[]}
+          data={dataDaftarUsaha}
           renderItem={props => (
             <RenderItem
               key={props.index}
@@ -150,7 +289,7 @@ const ActivityScreen: React.FC<
               jabatan={authInfo?.jabatan as AppRole}
             />
           )}
-          ListEmptyComponent={ListEmptyItem}
+          ListEmptyComponent={<ListEmptyItem message="Tidak ada aktivitas" />}
         />
       )}
     </Box>

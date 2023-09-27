@@ -20,7 +20,7 @@ const ImagePreview: React.FC<Props> = ({route, navigation}) => {
     };
   }, [backActionHandler]);
 
-  return <Image source={route.params.image} flex={1} />;
+  return <Image alt="Image" source={route.params.image} flex={1} />;
 };
 
 export default ImagePreview;

@@ -95,6 +95,7 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
       <VStack width={'$96'} p={2} pb={'$6'} space={'2xl'}>
         <Center>
           <Image
+            alt="Logo"
             size="xl"
             borderRadius={20}
             source={require('../../../assets/logo.png')}

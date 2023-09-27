@@ -51,7 +51,9 @@ const UserProfileScreen: React.FC<Props> = ({route}) => {
   }
 
   if (previewImage) {
-    return <Image source={{uri: previewImage as string}} flex={1} />;
+    return (
+      <Image alt="Image" source={{uri: previewImage as string}} flex={1} />
+    );
   }
 
   return (

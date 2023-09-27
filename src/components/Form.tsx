@@ -85,7 +85,7 @@ const AppForm = <T extends FieldValues>({
       isInvalid={invalid || false}
       isRequired={required || false}
       shadowRadius={20}
-      borderWidth={1}>
+      borderWidth={0}>
       <FormControlLabel>
         <FormControlLabelText fontWeight="bold">{label}</FormControlLabelText>
       </FormControlLabel>
@@ -94,7 +94,6 @@ const AppForm = <T extends FieldValues>({
         rules={rules}
         control={control}
         render={({field: {onBlur, onChange, value}}) => {
-          console.log({isMultiple});
           return isFile ? (
             <Button
               size="sm"

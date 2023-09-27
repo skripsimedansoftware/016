@@ -158,7 +158,7 @@ const RegistrationStep1 = () => {
             required
             error={errors.nik}
           />
-          <AppForm
+          <AppForm<IForm>
             control={control}
             name="nomor_hp"
             label="Nomor HP"
@@ -170,7 +170,7 @@ const RegistrationStep1 = () => {
             error={errors.nomor_hp}
           />
           <HStack alignContent="center" justifyContent="space-evenly">
-            <AppForm
+            <AppForm<IForm>
               control={control}
               name="fotocopy_kk"
               label="Scan KK"
@@ -183,11 +183,15 @@ const RegistrationStep1 = () => {
               isImage
             />
             {watch('fotocopy_kk') !== '' && (
-              <Image source={{uri: watch('fotocopy_kk') as string}} size="md" />
+              <Image
+                alt="Image"
+                source={{uri: watch('fotocopy_kk') as string}}
+                size="md"
+              />
             )}
           </HStack>
           <HStack alignContent="center" justifyContent="space-evenly">
-            <AppForm
+            <AppForm<IForm>
               control={control}
               name="fotocopy_ktp"
               label="Scan KTP"
@@ -201,13 +205,14 @@ const RegistrationStep1 = () => {
             />
             {watch('fotocopy_ktp') !== '' && (
               <Image
+                alt="Image"
                 source={{uri: watch('fotocopy_ktp') as string}}
                 size="md"
               />
             )}
           </HStack>
           <HStack alignContent="center" justifyContent="space-evenly">
-            <AppForm
+            <AppForm<IForm>
               control={control}
               name="fotocopy_npwp"
               label="Scan NPWP"
@@ -221,6 +226,7 @@ const RegistrationStep1 = () => {
             />
             {watch('fotocopy_npwp') !== '' && (
               <Image
+                alt="Image"
                 source={{uri: watch('fotocopy_npwp') as string}}
                 size="md"
               />

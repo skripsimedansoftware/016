@@ -37,7 +37,7 @@ type Props = NativeStackScreenProps<AuthStackParams, 'SignUp'>;
 
 type IForm = {
   email: string;
-  full_name: string;
+  nama_lengkap: string;
   password: string;
 };
 
@@ -49,7 +49,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
   } = useForm<IForm>({
     defaultValues: {
       email: '',
-      full_name: '',
+      nama_lengkap: '',
       password: '',
     },
   });
@@ -91,6 +91,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
       <VStack width={'$96'} p={2} pb={'$6'} space={'2xl'}>
         <Center>
           <Image
+            alt="Logo"
             size="xl"
             borderRadius={20}
             source={require('../../../assets/logo.png')}
@@ -98,18 +99,18 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
         </Center>
         <FormControl
           size="lg"
-          isInvalid={typeof errors?.full_name?.message !== 'undefined'}
+          isInvalid={typeof errors?.nama_lengkap?.message !== 'undefined'}
           isRequired={true}
           shadowRadius={20}>
           <FormControlLabel>
             <FormControlLabelText fontWeight="bold">
-              Full Name
+              Nama Lengkap
             </FormControlLabelText>
           </FormControlLabel>
           <Controller
-            name="full_name"
+            name="nama_lengkap"
             rules={{
-              required: 'Please enter your full name',
+              required: 'Masukkan nama lengkap Anda',
             }}
             control={control}
             render={({field: {onBlur, onChange, value}}) => {
@@ -117,7 +118,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
                 <Input>
                   <InputInput
                     type="text"
-                    placeholder="Full Name"
+                    placeholder="Nama Lengkap"
                     placeholderTextColor={'gray'}
                     onBlur={onBlur}
                     onChangeText={onChange}
@@ -128,15 +129,15 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
             }}
           />
           <FormControlHelper>
-            <FormControlHelperText>Enter your full name</FormControlHelperText>
+            <FormControlHelperText>Nama Lengkap Anda</FormControlHelperText>
           </FormControlHelper>
-          {errors?.full_name && (
+          {errors?.nama_lengkap && (
             <FormControlError>
               <FormControlErrorIcon
                 as={() => Icon('alert-circle-outline', 20)}
               />
               <FormControlErrorText>
-                {errors.full_name.message}
+                {errors.nama_lengkap.message}
               </FormControlErrorText>
             </FormControlError>
           )}
@@ -152,7 +153,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
           <Controller
             name="email"
             rules={{
-              required: 'Please enter your email address',
+              required: 'Silahkan masukkan alamat email',
             }}
             control={control}
             render={({field: {onBlur, onChange, value}}) => {
@@ -171,7 +172,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
             }}
           />
           <FormControlHelper>
-            <FormControlHelperText>Enter your email</FormControlHelperText>
+            <FormControlHelperText>Alamat Email Anda</FormControlHelperText>
           </FormControlHelper>
           {errors?.email && (
             <FormControlError>
@@ -190,21 +191,21 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
           isRequired={true}>
           <FormControlLabel mb="$1">
             <FormControlLabelText fontWeight="bold">
-              Password
+              Kata sandi
             </FormControlLabelText>
           </FormControlLabel>
           <Controller
             control={control}
             name="password"
             rules={{
-              required: 'Please enter your password',
+              required: 'Masukkan kata sandi anda',
             }}
             render={({field: {onBlur, onChange, value}}) => {
               return (
                 <Input>
                   <InputInput
                     type="password"
-                    placeholder="Password"
+                    placeholder="Kata sandi"
                     placeholderTextColor={'gray'}
                     onBlur={onBlur}
                     onChangeText={onChange}
@@ -215,7 +216,9 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
             }}
           />
           <FormControlHelper>
-            <FormControlHelperText>Enter your password</FormControlHelperText>
+            <FormControlHelperText>
+              Kata sandi untuk akun baru
+            </FormControlHelperText>
           </FormControlHelper>
           {errors?.password && (
             <FormControlError>
@@ -232,7 +235,7 @@ const SignUpScreen: React.FC<Props> = ({navigation}) => {
       <VStack w={'$96'} p={10} borderBottomWidth={1} paddingBottom={24}>
         <Box>
           <Button onPress={handleSubmit(onSubmit)}>
-            <ButtonText>Sign Up</ButtonText>
+            <ButtonText>Mendaftar</ButtonText>
           </Button>
         </Box>
       </VStack>

@@ -119,7 +119,9 @@ const AccountScreen: React.FC<Props> = ({route, navigation}) => {
   }, [navigation, backActionHandler, onBlurAction]);
 
   if (previewImage) {
-    return <Image source={{uri: previewImage as string}} flex={1} />;
+    return (
+      <Image alt="Image" source={{uri: previewImage as string}} flex={1} />
+    );
   }
 
   if (loading) {

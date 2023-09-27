@@ -31,7 +31,7 @@ const ItemList: React.FC<{label: string; val: unknown}> = ({label, val}) => {
         <Text>{label}</Text>
       </VStack>
       <VStack w={'$1/2'} justifyContent="center" px={2}>
-        <Text>{val}</Text>
+        <Text>{val as string}</Text>
       </VStack>
     </HStack>
   );
