@@ -3,7 +3,7 @@ import {HStack, Text} from '@gluestack-ui/themed';
 
 type Props = {
   label: string;
-  value: string | number | undefined;
+  value: string | number | null | undefined;
 };
 
 const LabelItem: React.FC<Props> = ({label, value}) => {

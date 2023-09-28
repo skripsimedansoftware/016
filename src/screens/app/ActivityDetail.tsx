@@ -1,6 +1,5 @@
 import React from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 import {
   Box,
   Button,
@@ -8,6 +7,7 @@ import {
   Center,
   HStack,
   Heading,
+  Image,
   Input,
   InputInput,
   Modal,
@@ -17,12 +17,14 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  ScrollView,
   Text,
   VStack,
 } from '@gluestack-ui/themed';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {useApp} from '@/contexts/AppContext';
 import {AppRole} from '@/interfaces/App';
+import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 
 const ItemList: React.FC<{label: string; val: unknown}> = ({label, val}) => {
   return (
@@ -34,6 +36,28 @@ const ItemList: React.FC<{label: string; val: unknown}> = ({label, val}) => {
         <Text>{val as string}</Text>
       </VStack>
     </HStack>
+  );
+};
+
+const AttachmentView: React.FC<{title: string; file: string}> = ({
+  title,
+  file,
+}) => {
+  const {request} = useApp();
+  return (
+    <Center>
+      <VStack justifyContent="center" alignItems="center">
+        <Heading>{title}</Heading>
+        <Image
+          source={{
+            uri: `${request.getUri()}/public/uploads/${file}`,
+          }}
+          alt="Image"
+          h={200}
+          w={200}
+        />
+      </VStack>
+    </Center>
   );
 };
 
@@ -62,59 +86,36 @@ const ActivityDetailScreen: React.FC<
   }
 
   return (
-    <Box h={'$full'}>
+    <Box h={'$full'} overflow="scroll">
       <VStack borderWidth={1} h={'$full'}>
-        <ItemList label="Nama Usaha" val={route.params.usaha?.nama} />
-        <ItemList label="Jenis Usaha" val={route.params.usaha?.jenis_usaha} />
-        <ItemList label="Sektor Usaha" val={route.params.usaha?.sektor_usaha} />
-        <HStack borderWidth={0.4} py={2}>
-          <VStack w={'$1/2'} borderWidth={0} px={10}>
-            <Text>Produk</Text>
-          </VStack>
-          <VStack w={'$1/2'} justifyContent="center" px={2}>
-            <Text>{route.params.usaha?.produk}</Text>
-          </VStack>
-        </HStack>
-        <HStack borderWidth={0.4} py={2}>
-          <VStack w={'$1/2'} borderWidth={0} px={10}>
-            <Text>Provinsi</Text>
-          </VStack>
-          <VStack w={'$1/2'} justifyContent="center" px={2}>
-            <Text>{route.params.usaha?.provinsi}</Text>
-          </VStack>
-        </HStack>
-        <HStack borderWidth={0.4} py={2}>
-          <VStack w={'$1/2'} borderWidth={0} px={10}>
-            <Text>Kabupaten / Kota</Text>
-          </VStack>
-          <VStack w={'$1/2'} justifyContent="center" px={2}>
-            <Text>{route.params.usaha?.kabupaten_atau_kota}</Text>
-          </VStack>
-        </HStack>
-        <HStack borderWidth={0.4} py={2}>
-          <VStack w={'$1/2'} borderWidth={0} px={10}>
-            <Text>Kecamatan</Text>
-          </VStack>
-          <VStack w={'$1/2'} justifyContent="center" px={2}>
-            <Text>{route.params.usaha?.kecamatan}</Text>
-          </VStack>
-        </HStack>
-        <HStack borderWidth={0.4} py={2}>
-          <VStack w={'$1/2'} borderWidth={0} px={10}>
-            <Text>Desa atau Kelurahan</Text>
-          </VStack>
-          <VStack w={'$1/2'} justifyContent="center" px={2}>
-            <Text>{route.params.usaha?.desa_atau_kelurahan}</Text>
-          </VStack>
-        </HStack>
-        <HStack borderWidth={0.4} py={2}>
-          <VStack w={'$1/2'} borderWidth={0} px={10}>
-            <Text>Alamat</Text>
-          </VStack>
-          <VStack w={'$1/2'} justifyContent="center" px={2}>
-            <Text>{route.params.usaha?.alamat}</Text>
-          </VStack>
-        </HStack>
+        <ScrollView>
+          <ItemList label="Nama Usaha" val={route.params.usaha?.nama} />
+          <ItemList label="Jenis Usaha" val={route.params.usaha?.jenis_usaha} />
+          <ItemList
+            label="Sektor Usaha"
+            val={route.params.usaha?.sektor_usaha}
+          />
+          <ItemList label="Produk" val={route.params.usaha?.produk} />
+          <ItemList label="Provinsi" val={route.params.usaha?.provinsi} />
+          <ItemList
+            label="Kabupaten/Kota"
+            val={route.params.usaha?.kabupaten_atau_kota}
+          />
+          <ItemList label="Kecamatan" val={route.params.usaha?.kecamatan} />
+          <ItemList
+            label="Desa/Kelurahan"
+            val={route.params.usaha?.desa_atau_kelurahan}
+          />
+          <ItemList label="Alamat" val={route.params.usaha?.alamat} />
+          <AttachmentView
+            title="Fotocopy Izin Usaha"
+            file={route.params.usaha?.fotocopy_izin_usaha as string}
+          />
+          <AttachmentView
+            title="Fotocopy Keterangan Usaha"
+            file={route.params.usaha?.fotocopy_keterangan_usaha as string}
+          />
+        </ScrollView>
         <HStack
           w={'$full'}
           borderWidth={0}

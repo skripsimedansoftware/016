@@ -4,17 +4,7 @@ import {
   Box,
   Button,
   ButtonText,
-  Fab,
-  FabLabel,
   HStack,
-  Heading,
-  Modal,
-  ModalBackdrop,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
   Text,
   VStack,
 } from '@gluestack-ui/themed';
@@ -23,20 +13,11 @@ import {
   NativeStackScreenProps,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import Icon from '@expo/vector-icons/Ionicons';
 import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 import {useApp} from '@/contexts/AppContext';
 import ListEmptyItem from '@/components/ListEmptyItem';
-import {AppRole, IAssetOmzet, IDaftarUsaha} from '@/interfaces/App';
-import AppForm from '@/components/Form';
-import {useForm} from 'react-hook-form';
-import TahunPicker from '@/components/Picker/Tahun';
-
-interface IFormAssetOmzet {
-  tahun: string;
-  omzet: string;
-  asset: string;
-}
+import {AppRole, IDaftarUsaha, UsahaStatus} from '@/interfaces/App';
+import LottieLoader from '@/components/LottieLoader';
 
 const RenderItem: React.FC<{
   item: IDaftarUsaha;
@@ -104,78 +85,120 @@ const RenderItem: React.FC<{
   );
 };
 
-const RenderItemAsPengusaha: React.FC<{item: IAssetOmzet}> = ({item}) => {
-  // const navigation =
-  //   useNavigation<
-  //     NativeStackNavigationProp<AppStackNavigatorParams, 'Activity'>
-  //   >();
+const LabelValue: React.FC<{
+  label: string;
+  value: undefined | null | string | number;
+}> = ({label, value}) => {
   return (
-    <Box borderWidth={0} borderBottomWidth={1} borderColor="$fuchsia600" p={10}>
-      <HStack space="md" p={'$1'}>
-        <Box maxWidth={'$1/3'} minWidth={'$1/3'} justifyContent="center">
-          <Text>{item.asset}</Text>
-        </Box>
-        <Box maxWidth={'$1/3'} minWidth={'$1/3'} justifyContent="center">
-          <Text>{item.omzet}</Text>
-        </Box>
-        <Box maxWidth={'$1/3'} minWidth={'$1/3'} justifyContent="center">
-          <Text>{item.tahun}</Text>
-        </Box>
-      </HStack>
+    <HStack>
+      <Box w={'$1/3'}>
+        <Text>{label}</Text>
+      </Box>
+      <Box w={'$1/3'}>
+        <Text>{value}</Text>
+      </Box>
+    </HStack>
+  );
+};
+
+const UsahaInfoComponent: React.FC<{id: number}> = ({id}) => {
+  const [usahaDetail, setUsahaDetail] = React.useState<IDaftarUsaha | null>(
+    null,
+  );
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const {request} = useApp();
+  const loadUsahaDetail = React.useCallback(() => {
+    setIsLoading(true);
+    request.get<IDaftarUsaha>(`/daftar-usaha/${id}`).then(
+      response => {
+        setIsLoading(false);
+        setUsahaDetail(response.data);
+      },
+      () => {
+        setIsLoading(false);
+      },
+    );
+  }, [request, id]);
+
+  React.useEffect(() => {
+    loadUsahaDetail();
+  }, [loadUsahaDetail]);
+
+  if (isLoading) {
+    return <LottieLoader message="Mengunduh Informasi" />;
+  }
+
+  return (
+    <Box flex={1} borderTopWidth={1}>
+      <VStack>
+        <LabelValue label="Nama" value={usahaDetail?.nama} />
+        <LabelValue label="Produk" value={usahaDetail?.produk} />
+        <LabelValue label="Jenis Usaha" value={usahaDetail?.jenis_usaha} />
+        <LabelValue label="Sektor Usaha" value={usahaDetail?.sektor_usaha} />
+        <LabelValue label="Detail Usaha" value={usahaDetail?.detail_usaha} />
+        <LabelValue label="Provinsi" value={usahaDetail?.provinsi} />
+        <LabelValue
+          label="Kabupaten / kota"
+          value={usahaDetail?.detail_usaha}
+        />
+        <LabelValue label="Kecamatan" value={usahaDetail?.kecamatan} />
+        <LabelValue
+          label="Desa / Kelurahan"
+          value={usahaDetail?.desa_atau_kelurahan}
+        />
+        <LabelValue label="Alamat" value={usahaDetail?.alamat} />
+        <LabelValue label="Status" value={usahaDetail?.status} />
+      </VStack>
     </Box>
   );
 };
 
 const ActivityScreen: React.FC<
   NativeStackScreenProps<AppStackNavigatorParams, 'Activity'>
-> = ({}) => {
+> = ({navigation}) => {
   const [dataDaftarUsaha, setDataDaftarUsaha] = React.useState<IDaftarUsaha[]>(
     [],
   );
-  const [dataAssetOmzet, setDataAssetOmzet] = React.useState<IAssetOmzet[]>([]);
-
-  const [showModal, setShowModal] = React.useState<boolean>(false);
-  const [usahaID, setUsahaID] = React.useState<number | null>(null);
+  const [usahaInfo, setUsahaInfo] = React.useState<{
+    id: number;
+    owner: number;
+    status: UsahaStatus;
+  } | null>(null);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const {request, authInfo} = useApp();
-  const {
-    control,
-    handleSubmit,
-    // watch,
-    formState: {errors},
-  } = useForm<IFormAssetOmzet>({
-    defaultValues: {
-      tahun: '',
-      asset: '',
-      omzet: '',
-    },
-  });
 
   const loadData = React.useCallback(() => {
-    if (authInfo?.jabatan === 'admin') {
+    setIsLoading(true);
+    if (authInfo?.jabatan === 'pengusaha') {
+      request
+        .get<{id: number; owner: number; status: UsahaStatus}>(
+          '/daftar-usaha/mine',
+        )
+        .then(
+          response => {
+            setUsahaInfo(response.data);
+            setIsLoading(false);
+          },
+          () => {
+            setIsLoading(false);
+          },
+        );
+    } else {
       request
         .get<{count: number; rows: IDaftarUsaha[]}>(
           '/daftar-usaha/status/pengajuan',
         )
-        .then(response => {
-          if (response.data.rows) {
-            setDataDaftarUsaha(response.data.rows);
-          }
-        }, console.log);
-    } else if (authInfo?.jabatan === 'pengusaha') {
-      request
-        .get<{id: number; owner: number}>('/daftar-usaha/mine')
-        .then(daftarUsaha => {
-          if (daftarUsaha.data.id) {
-            setUsahaID(daftarUsaha.data.id);
-            request
-              .get<IAssetOmzet[]>(
-                `/daftar-usaha/${daftarUsaha.data.id}/asset-omzet`,
-              )
-              .then(assetOmzet => {
-                setDataAssetOmzet(assetOmzet.data);
-              });
-          }
-        }, console.log);
+        .then(
+          response => {
+            setIsLoading(false);
+            if (response.data.rows) {
+              setDataDaftarUsaha(response.data.rows);
+            }
+          },
+          () => {
+            setIsLoading(false);
+          },
+        );
     }
   }, [request, authInfo]);
 
@@ -183,111 +206,29 @@ const ActivityScreen: React.FC<
     loadData();
   }, [loadData]);
 
-  const onSubmit = (form: IFormAssetOmzet) => {
-    request
-      .post<IAssetOmzet>(`/daftar-usaha/${usahaID}/asset-omzet`, form)
-      .then(() => {
-        setShowModal(false);
-      }, console.log);
-  };
+  if (isLoading) {
+    return <LottieLoader message="Mengambil data" />;
+  }
 
   return (
     <Box flex={1} borderWidth={0} borderTopColor="black" borderTopWidth={1}>
       {authInfo?.jabatan === 'pengusaha' ? (
         <Box flex={1}>
-          <FlatList
-            data={dataAssetOmzet}
-            renderItem={props => (
-              <RenderItemAsPengusaha key={props.index} item={props.item} />
-            )}
-            ListEmptyComponent={<ListEmptyItem message="Tidak ada aktivitas" />}
-          />
-          {usahaID !== null && (
-            <Fab
-              size="lg"
-              placement="bottom right"
-              isHovered={false}
-              isDisabled={false}
-              isPressed={false}
-              onPress={() => {
-                setShowModal(true);
-              }}>
-              <Icon name="add" size={20} color={'white'} />
-              <FabLabel ml={4}>Asset & Omzet</FabLabel>
-            </Fab>
+          {usahaInfo !== null ? (
+            <UsahaInfoComponent id={usahaInfo.id} />
+          ) : (
+            <Box justifyContent="center" alignItems="center" flex={1}>
+              <Text bold>Belum Mendaftar</Text>
+              <Text>Anda belum mendaftarkan usaha milik Anda</Text>
+              <Button
+                onPress={() => {
+                  navigation.navigate('Registration');
+                }}
+                my="$1">
+                <ButtonText>Daftarkan Sekarang</ButtonText>
+              </Button>
+            </Box>
           )}
-          <Modal
-            isOpen={showModal}
-            onClose={() => {
-              setShowModal(false);
-            }}
-            // finalFocusRef={ref}
-          >
-            <ModalBackdrop />
-            <ModalContent>
-              <ModalHeader>
-                <Heading size="lg">Aset & Omzet</Heading>
-                <ModalCloseButton>
-                  <Text>X</Text>
-                </ModalCloseButton>
-              </ModalHeader>
-              <ModalBody>
-                <Text my={'$0.5'}>
-                  Silahkan masukkan nilai aset dan omzet Anda untuk memantau
-                  statistik data tahunan
-                </Text>
-                <AppForm<IFormAssetOmzet>
-                  control={control}
-                  name="asset"
-                  label="Aset"
-                  placeholder="Asset"
-                  helperText="Jelaskan asset anda"
-                  rules={{required: 'Silahkan masukkan aset Anda'}}
-                  invalid={typeof errors.asset?.message !== 'undefined'}
-                  required
-                  error={errors.asset}
-                />
-                <AppForm<IFormAssetOmzet>
-                  control={control}
-                  name="omzet"
-                  label="Omzet"
-                  placeholder="Omzet"
-                  helperText="Masukkan omzet usaha Anda"
-                  rules={{required: 'Silahkan masukkan omzet usaha Anda'}}
-                  invalid={typeof errors.omzet?.message !== 'undefined'}
-                  required
-                  error={errors.omzet}
-                />
-                <TahunPicker<IFormAssetOmzet>
-                  control={control}
-                  label="Tahun"
-                  name="tahun"
-                  rules={{
-                    required: 'Silahkan pilih tahun',
-                  }}
-                />
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  action="secondary"
-                  mr="$3"
-                  onPress={() => {
-                    setShowModal(false);
-                  }}>
-                  <ButtonText>Batal</ButtonText>
-                </Button>
-                <Button
-                  size="sm"
-                  action="positive"
-                  borderWidth="$0"
-                  onPress={handleSubmit(onSubmit)}>
-                  <ButtonText>Simpan</ButtonText>
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
         </Box>
       ) : (
         <FlatList

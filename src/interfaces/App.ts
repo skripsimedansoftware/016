@@ -4,6 +4,13 @@ export enum AppRole {
   pengusaha = 'pengusaha',
 }
 
+export type UsahaStatus =
+  | 'aktif'
+  | 'non-aktif'
+  | 'melengkapi'
+  | 'pengajuan'
+  | 'perbaikan';
+
 export interface IUser {
   id: number;
   nik: string;
@@ -39,7 +46,7 @@ export interface IDaftarUsaha {
   latitude: number;
   longitude: number;
   catatan: string | null;
-  status: string;
+  status: UsahaStatus;
   created_at: string;
   updated_at: string;
   owner: number;
@@ -48,8 +55,8 @@ export interface IDaftarUsaha {
 
 export interface IAssetOmzet {
   id: number;
-  tahun: number;
-  omzet: number;
+  tahun: string;
+  omzet: string;
   asset: string;
   created_at: string;
   updated_at: string;

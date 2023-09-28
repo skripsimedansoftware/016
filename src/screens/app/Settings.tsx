@@ -453,12 +453,18 @@ const SektorUsaha = () => {
 const Informasi = () => {
   const {request} = useApp();
   const {height} = Dimensions.get('screen');
+  const webViewRef = React.useRef<WebView>(null);
   const navigation = useNavigation<NavigationProps>();
 
   const backActionHandler = React.useCallback(() => {
     navigation.setParams({part: undefined});
     return true;
   }, [navigation]);
+
+  const sendActionToWebView = React.useCallback((action: string) => {
+    const jsCode = `handleAction('${action}')`;
+    webViewRef.current?.injectJavaScript(jsCode);
+  }, []);
 
   React.useEffect(() => {
     const backPress = BackHandler.addEventListener(
@@ -473,8 +479,30 @@ const Informasi = () => {
 
   return (
     <Box flex={1} borderWidth={0} borderColor="blue" pt={'$16'}>
-      <WebView source={{uri: `${request.getUri()}/meta-data/info`}} />
-      <Button marginBottom={height / 4.3} w={'$4/6'} alignSelf="center">
+      <WebView
+        ref={webViewRef}
+        source={{uri: `${request.getUri()}/meta-data/edit-info`}}
+        onMessage={event => {
+          const data = JSON.parse(event.nativeEvent.data);
+          navigation.goBack();
+          request.post('/meta-data/info', {data: data?.editorValue}).then(
+            () => {
+              navigation.goBack();
+            },
+            () => {
+              navigation.goBack();
+              //
+            },
+          );
+          console.log({data});
+          console.log({event});
+        }}
+      />
+      <Button
+        marginBottom={height / 4.3}
+        w={'$4/6'}
+        alignSelf="center"
+        onPress={() => sendActionToWebView('submit')}>
         <ButtonText>Simpan</ButtonText>
       </Button>
     </Box>

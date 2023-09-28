@@ -2,7 +2,7 @@ import React from 'react';
 import {useWindowDimensions, TouchableOpacity} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
-import {IUser} from '@/interfaces/App';
+import {AppRole, IDaftarUsaha, IUser, UsahaStatus} from '@/interfaces/App';
 import LoadingScreen from '@/screens/app/Loading';
 import {useApp} from '@/contexts/AppContext';
 import {
@@ -16,8 +16,53 @@ import {
   Image,
 } from '@gluestack-ui/themed';
 import LabelItem from '@/components/LabelItem';
+import LottieLoader from '@/components/LottieLoader';
 
 type Props = NativeStackScreenProps<AppStackNavigatorParams, 'UserProfile'>;
+
+const InfoUsaha = ({profile}: {profile: IUser}) => {
+  const {request} = useApp();
+  const [infoUsaha, setInfoUsaha] = React.useState<IDaftarUsaha | null>(null);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+  if (profile.jabatan === AppRole.pengusaha) {
+    setIsLoading(true);
+    request
+      .get<{id: number; owner: number; status: UsahaStatus}>(
+        '/daftar-usaha/mine',
+      )
+      .then(
+        mine => {
+          request.get<IDaftarUsaha>(`/daftar-usaha/${mine.data.id}`).then(
+            response => {
+              setInfoUsaha(response.data);
+            },
+            () => {
+              setIsLoading(false);
+            },
+          );
+        },
+        () => {
+          setIsLoading(false);
+        },
+      );
+  }
+
+  if (isLoading) {
+    return <LottieLoader message="Mengambil Info Usaha" />;
+  }
+
+  if (profile.jabatan !== AppRole.pengusaha) {
+    return;
+  }
+
+  return (
+    <Box>
+      <LabelItem label="Nama Usaha" value={infoUsaha?.nama} />
+      <LabelItem label="Produk" value={infoUsaha?.produk} />
+    </Box>
+  );
+};
 
 const UserProfileScreen: React.FC<Props> = ({route}) => {
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -85,6 +130,7 @@ const UserProfileScreen: React.FC<Props> = ({route}) => {
           <LabelItem label="NIK" value={profile?.nik} />
           <LabelItem label="Email" value={profile?.email} />
           <LabelItem label="Nama Lengkap" value={profile?.nama_lengkap} />
+          <InfoUsaha profile={profile as IUser} />
         </Box>
       </Box>
     </Box>
