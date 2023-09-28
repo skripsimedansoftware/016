@@ -134,7 +134,7 @@ const UserProfileScreen: React.FC<Props> = ({route}) => {
           <LabelItem label="NIK" value={profile?.nik} />
           <LabelItem label="Email" value={profile?.email} />
           <LabelItem label="Nama Lengkap" value={profile?.nama_lengkap} />
-          <InfoUsaha profile={profile as IUser} />
+          {/* <InfoUsaha profile={profile as IUser} /> */}
         </Box>
       </Box>
     </Box>
