@@ -25,6 +25,10 @@ const InfoUsaha = ({profile}: {profile: IUser}) => {
   const [infoUsaha, setInfoUsaha] = React.useState<IDaftarUsaha | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
+  if (profile === null) {
+    return;
+  }
+
   if (profile.jabatan === AppRole.pengusaha) {
     setIsLoading(true);
     request
@@ -76,7 +80,7 @@ const UserProfileScreen: React.FC<Props> = ({route}) => {
   React.useEffect(() => {
     if (route.params.id !== profile?.id) {
       setLoading(true);
-      request.get(`/pengguna/profile/${route.params.id}`).then(
+      request.get<IUser>(`/pengguna/profile/${route.params.id}`).then(
         ({data}) => {
           setProfile(data);
           setLoading(false);
