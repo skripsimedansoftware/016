@@ -33,15 +33,8 @@ const TahunPicker = <T extends FieldValues>({
   const [data, setData] = React.useState<React.ReactElement[]>([]);
   const loadData = React.useCallback(() => {
     const years: number[] = [];
-    const yearNow = 2023;
-
-    for (let i = yearNow - 1; i >= yearNow - 10; i--) {
-      years.push(i);
-    }
-
-    // Tambahkan 10 tahun ke atas ke dalam array
-    for (let i = yearNow + 1; i <= yearNow + 10; i++) {
-      years.push(i);
+    for (let year = 2018; year <= 2040; year++) {
+      years.push(year);
     }
 
     const items = years
