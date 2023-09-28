@@ -33,5 +33,14 @@
     const editorValue = CKEDITOR.instances.editor.getData();
     window.ReactNativeWebView.postMessage(JSON.stringify({ editorValue }));
   });
+
+  function handleAction(action) {
+    // Lakukan sesuatu dengan aksi yang diterima (contoh: log atau modifikasi konten)
+    console.log('Received action:', action);
+	const editorValue = CKEDITOR.instances.editor.getData();
+    window.ReactNativeWebView.postMessage(JSON.stringify({ editorValue }));
+    // Lakukan sesuatu dengan nilai action (misalnya, modifikasi konten di WebView)
+    // document.getElementById('editor').value = action;
+  }
 </script>
 </html>

@@ -20,11 +20,11 @@ app.get('/info', (req, res, next) => {
 });
 
 app.post('/info', (req, res, next) => {
-  fs.statfs(fileInfo).then(() => fs.readFile(fileInfo).then((info) => res.render('ckeditor', { data: info }), () => next()), () => fs.writeFile(fileInfo, '').then((val) => res.json(val), () => next()));
+  fs.writeFile(fileInfo, req.body.data).then(() => res.send(req.body.data), next);
 });
 
-app.put('/info', (req, res, next) => {
-  fs.writeFile(fileInfo, req.body.data).then(() => res.send(req.body.data), next);
+app.get('/edit-info', (req, res, next) => {
+  fs.statfs(fileInfo).then(() => fs.readFile(fileInfo).then((info) => res.render('ckeditor', { data: info }), () => next()), () => fs.writeFile(fileInfo, '').then((val) => res.json(val), () => next()));
 });
 
 app.get('/jenis-usaha', (req, res, next) => JenisUsaha.findAndCountAll().then(({ count, rows }) => res.json({ count, rows }), next));

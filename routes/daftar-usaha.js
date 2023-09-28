@@ -22,7 +22,7 @@ app.get('/mine', (req, res, next) => {
     where: {
       owner: req.user,
     },
-    attributes: ['id', 'owner'],
+    attributes: ['id', 'owner', 'status'],
   }).then((daftarUsaha) => {
     if (daftarUsaha !== null) {
       return res.json(daftarUsaha);
