@@ -26,7 +26,7 @@ const InfoUsaha = ({profile}: {profile: IUser}) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   if (profile === null) {
-    return;
+    return <></>;
   }
 
   if (profile.jabatan === AppRole.pengusaha) {
