@@ -1,74 +1,127 @@
 import React from 'react';
-import {useWindowDimensions} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
+import asyncStorage from '@react-native-async-storage/async-storage';
+import {useApp} from '@/contexts/AppContext';
+import {UsahaStatus} from '@/interfaces/App';
+import LottieLoader from '@/components/LottieLoader';
 import {
-  Box,
-  Button,
-  ButtonText,
-  HStack,
-  Heading,
-  VStack,
-  Text,
-} from '@gluestack-ui/themed';
-import {useAsyncStorage} from '@react-native-async-storage/async-storage';
+  AppStackNavigatorParams,
+  RegistrationStep,
+} from '@/interfaces/NavigatorParams';
 import RegistrationStep1 from '../registration/Step-1';
 import RegistrationStep2 from '../registration/Step-2';
 import RegistrationStep3 from '../registration/Step-3';
 import RegistrationStep4 from '../registration/Step-4';
 import RegistrationStep5 from '../registration/Step-5';
+import RegistrationOverview from '../registration/Overview';
 
 type Props = NativeStackScreenProps<AppStackNavigatorParams, 'Registration'>;
 
+type SavedState = {
+  step: RegistrationStep;
+  data: any;
+};
+
 const RegistrationScreen: React.FC<Props> = ({route, navigation}) => {
-  const {height, width} = useWindowDimensions();
-  const savedState = useAsyncStorage('registration');
+  const [usahaStatus, setUsahaStatus] = React.useState<UsahaStatus>(
+    route.params?.usahaStatus || 'melengkapi',
+  );
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [savedRegistration, setSavedRegistration] = React.useState<SavedState>({
+    step: undefined,
+    data: {},
+  });
+  const {request} = useApp();
+
+  const checkRegistrationStatus = React.useCallback(async () => {
+    setIsLoading(true);
+    const lastSaved = await asyncStorage.getItem('registration');
+
+    if (!route.params?.skipCheck) {
+      request
+        .get<{id: number; owner: number; status: UsahaStatus}>(
+          '/daftar-usaha/mine',
+        )
+        .then(
+          response => {
+            setIsLoading(false);
+            setUsahaStatus(response.data.status);
+            if (savedRegistration.step && !route.params?.step) {
+              navigation.setParams({
+                ...route.params,
+                step: savedRegistration.step,
+              });
+            }
+          },
+          () => {
+            setIsLoading(false);
+          },
+        );
+    } else {
+      setIsLoading(false);
+    }
+
+    if (lastSaved !== null) {
+      const parsed = JSON.parse(lastSaved);
+      setSavedRegistration(parsed);
+    }
+  }, [route.params, navigation, savedRegistration.step, request]);
+
+  if (route.params?.submitStep) {
+    const newData = Object.assign(savedRegistration.data, {
+      [`step_${route.params.submitStep.step}`]: route.params.submitStep.data,
+    });
+
+    asyncStorage.setItem(
+      'registration',
+      JSON.stringify({
+        step: route.params.step,
+        data: newData,
+      }),
+    );
+  }
 
   React.useEffect(() => {
-    savedState.getItem().then(lastState => {
-      if (lastState !== null && !route.params?.step) {
-        // Check registration status pending
-        if (!Number.isNaN(parseFloat(lastState))) {
-          navigation.setParams({step: parseFloat(lastState)});
-        }
-      }
-    });
-  }, [savedState, route.params, navigation]);
+    checkRegistrationStatus();
+  }, [checkRegistrationStatus]);
 
-  if (route.params?.step) {
-    savedState.setItem(route.params.step.toString());
+  if (isLoading) {
+    return <LottieLoader message="Mengambil Sesi" />;
   }
 
   switch (route.params?.step) {
     case 1:
-      return <RegistrationStep1 />;
-    case 2:
-      return <RegistrationStep2 />;
-    case 3:
-      return <RegistrationStep3 />;
-    case 4:
-      return <RegistrationStep4 />;
-    case 5:
-      return <RegistrationStep5 />;
-    default:
       return (
-        <Box
-          justifyContent="center"
-          alignItems="center"
-          borderWidth={0}
-          h={height}
-          w={width}>
-          <HStack mb={height / 6}>
-            <VStack space="md">
-              <Heading>Registrasi Usaha</Heading>
-              <Text>Silahkan lakukan registrasi di lokasi usaha anda</Text>
-              <Button onPress={() => navigation.setParams({step: 1})}>
-                <ButtonText>Lanjutkan</ButtonText>
-              </Button>
-            </VStack>
-          </HStack>
-        </Box>
+        <RegistrationStep1
+          savedForm={savedRegistration.data[`step_${route.params.step}`]}
+        />
       );
+    case 2:
+      return (
+        <RegistrationStep2
+          savedForm={savedRegistration.data[`step_${route.params.step}`]}
+        />
+      );
+    case 3:
+      return (
+        <RegistrationStep3
+          savedForm={savedRegistration.data[`step_${route.params.step}`]}
+        />
+      );
+    case 4:
+      return (
+        <RegistrationStep4
+          savedForm={savedRegistration.data[`step_${route.params.step}`]}
+        />
+      );
+    case 5:
+      return (
+        <RegistrationStep5
+          savedForm={savedRegistration.data[`step_${route.params.step}`]}
+        />
+      );
+    default:
+      return <RegistrationOverview status={usahaStatus} />;
   }
 };
 

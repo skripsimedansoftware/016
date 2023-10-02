@@ -16,6 +16,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import * as Location from 'expo-location';
 import WebView from 'react-native-webview';
+import asyncStorage from '@react-native-async-storage/async-storage';
 import {useApp} from '@/contexts/AppContext';
 import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
 import LottieLoader from '@/components/LottieLoader';
@@ -36,7 +37,7 @@ type NavigationProps = NativeStackNavigationProp<
   'Registration'
 >;
 
-const RegistrationStep5 = () => {
+const RegistrationStep5: React.FC<{savedForm?: IForm}> = () => {
   const {handleSubmit, setValue} = useForm<IForm>();
   const {request} = useApp();
   const toast = useToast();
@@ -82,8 +83,8 @@ const RegistrationStep5 = () => {
   const onSubmit = async (data: IForm) => {
     // Send request
     request.post('/pendaftaran/step-5', data).then(
-      () => {
-        navigation.setParams({step: 'none'});
+      async () => {
+        await asyncStorage.removeItem('registration');
         navigation.popToTop();
       },
       error => {

@@ -15,7 +15,7 @@ import {
 import {useForm} from 'react-hook-form';
 import mime from 'mime';
 import * as FileSystem from 'expo-file-system';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import AppForm from '@/components/Form';
 import {useApp} from '@/contexts/AppContext';
@@ -34,14 +34,14 @@ type NavigationProps = NativeStackNavigationProp<
   'Registration'
 >;
 
-const RegistrationStep1 = () => {
+const RegistrationStep1: React.FC<{savedForm?: IForm}> = ({savedForm}) => {
   const {
     control,
     handleSubmit,
     watch,
     formState: {errors},
   } = useForm<IForm>({
-    defaultValues: {
+    defaultValues: savedForm || {
       nik: '',
       nomor_hp: '',
       fotocopy_kk: '',
@@ -51,8 +51,11 @@ const RegistrationStep1 = () => {
   });
   const {request} = useApp();
   const toast = useToast();
+  const router = useRoute<RouteProp<AppStackNavigatorParams, 'Registration'>>();
   const navigation = useNavigation<NavigationProps>();
   const {width} = Dimensions.get('window');
+
+  console.log({savedForm});
 
   const onSubmit = async (data: IForm) => {
     const formData = new FormData();
@@ -98,8 +101,12 @@ const RegistrationStep1 = () => {
         },
       })
       .then(
-        () => {
-          navigation.setParams({step: 2});
+        async () => {
+          navigation.setParams({
+            ...router.params,
+            step: 2,
+            submitStep: {step: 1, data},
+          });
         },
         error => {
           if (typeof error.response !== 'undefined') {

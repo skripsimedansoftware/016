@@ -2,7 +2,7 @@ import React from 'react';
 import {useWindowDimensions, TouchableOpacity} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
-import {AppRole, IDaftarUsaha, IUser, UsahaStatus} from '@/interfaces/App';
+import {IUser} from '@/interfaces/App';
 import LoadingScreen from '@/screens/app/Loading';
 import {useApp} from '@/contexts/AppContext';
 import {
@@ -16,57 +16,8 @@ import {
   Image,
 } from '@gluestack-ui/themed';
 import LabelItem from '@/components/LabelItem';
-import LottieLoader from '@/components/LottieLoader';
 
 type Props = NativeStackScreenProps<AppStackNavigatorParams, 'UserProfile'>;
-
-const InfoUsaha = ({profile}: {profile: IUser}) => {
-  const {request} = useApp();
-  const [infoUsaha, setInfoUsaha] = React.useState<IDaftarUsaha | null>(null);
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-
-  if (profile === null) {
-    return <></>;
-  }
-
-  if (profile.jabatan === AppRole.pengusaha) {
-    setIsLoading(true);
-    request
-      .get<{id: number; owner: number; status: UsahaStatus}>(
-        '/daftar-usaha/mine',
-      )
-      .then(
-        mine => {
-          request.get<IDaftarUsaha>(`/daftar-usaha/${mine.data.id}`).then(
-            response => {
-              setInfoUsaha(response.data);
-            },
-            () => {
-              setIsLoading(false);
-            },
-          );
-        },
-        () => {
-          setIsLoading(false);
-        },
-      );
-  }
-
-  if (isLoading) {
-    return <LottieLoader message="Mengambil Info Usaha" />;
-  }
-
-  if (profile.jabatan !== AppRole.pengusaha) {
-    return;
-  }
-
-  return (
-    <Box>
-      <LabelItem label="Nama Usaha" value={infoUsaha?.nama} />
-      <LabelItem label="Produk" value={infoUsaha?.produk} />
-    </Box>
-  );
-};
 
 const UserProfileScreen: React.FC<Props> = ({route}) => {
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -74,26 +25,25 @@ const UserProfileScreen: React.FC<Props> = ({route}) => {
     false,
   );
   const [profile, setProfile] = React.useState<IUser | null>(null);
-  const {height, width} = useWindowDimensions();
+  const {width} = useWindowDimensions();
   const {request} = useApp();
 
+  const loadProfile = React.useCallback(() => {
+    setLoading(true);
+    request.get<IUser>(`/pengguna/profile/${route.params.id}`).then(
+      ({data}) => {
+        setProfile(data);
+        setLoading(false);
+      },
+      () => {
+        setLoading(false);
+      },
+    );
+  }, [request, route.params]);
+
   React.useEffect(() => {
-    if (route.params.id !== profile?.id) {
-      setLoading(true);
-      request.get<IUser>(`/pengguna/profile/${route.params.id}`).then(
-        ({data}) => {
-          setProfile(data);
-          setLoading(false);
-        },
-        error => {
-          if (typeof error.response === 'undefined') {
-            // server offline
-          }
-          setLoading(false);
-        },
-      );
-    }
-  }, [profile?.id, route.params.id, request]);
+    loadProfile();
+  }, [loadProfile]);
 
   if (loading) {
     return <LoadingScreen />;
@@ -106,7 +56,7 @@ const UserProfileScreen: React.FC<Props> = ({route}) => {
   }
 
   return (
-    <Box borderWidth={0} mt={4} pt={0} height={height}>
+    <Box borderWidth={0} mt={4} pt={0} flex={1}>
       <Center>
         <TouchableOpacity
           onPress={() =>
@@ -134,7 +84,6 @@ const UserProfileScreen: React.FC<Props> = ({route}) => {
           <LabelItem label="NIK" value={profile?.nik} />
           <LabelItem label="Email" value={profile?.email} />
           <LabelItem label="Nama Lengkap" value={profile?.nama_lengkap} />
-          {/* <InfoUsaha profile={profile as IUser} /> */}
         </Box>
       </Box>
     </Box>

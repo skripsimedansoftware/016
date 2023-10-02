@@ -49,36 +49,31 @@ const Item: React.FC<{data: IDaftarUsaha}> = ({data}) => {
       NativeStackNavigationProp<AppStackNavigatorParams, 'Monitoring'>
     >();
   return (
-    <HStack borderWidth={1} space="md" alignItems="center" padding={10}>
-      <VStack>
+    <HStack borderWidth={1} alignItems="center" p={8}>
+      <VStack w={'$1/3'} p={2}>
+        <Text>{data.pengusaha?.nama_lengkap}</Text>
+      </VStack>
+      <VStack w={'$1/3'} p={2}>
         <Text>{data.nama}</Text>
       </VStack>
-      <VStack>
-        <Text>{data.sektor_usaha}</Text>
-      </VStack>
-      <VStack>
-        <Text>{data.jenis_usaha}</Text>
-      </VStack>
-      <VStack space="md">
-        <HStack space="md" justifyContent="center">
-          <Button
-            size="xs"
-            onPress={() => {
-              navigation.navigate('OpenStreetMap', {
-                version: 2,
-                query: {lat: data.latitude, lon: data.longitude},
-              });
-            }}>
-            <ButtonText>Lokasi</ButtonText>
-          </Button>
-          <Button
-            size="xs"
-            onPress={() => {
-              navigation.navigate('MonitoringDetail', {data});
-            }}>
-            <ButtonText>Detail</ButtonText>
-          </Button>
-        </HStack>
+      <VStack w={'$1/3'} p={2} space="md" justifyContent="center">
+        <Button
+          size="xs"
+          onPress={() => {
+            navigation.navigate('OpenStreetMap', {
+              version: 2,
+              query: {lat: data.latitude, lon: data.longitude},
+            });
+          }}>
+          <ButtonText>Lokasi</ButtonText>
+        </Button>
+        <Button
+          size="xs"
+          onPress={() => {
+            navigation.navigate('MonitoringDetail', {data});
+          }}>
+          <ButtonText>Detail</ButtonText>
+        </Button>
       </VStack>
     </HStack>
   );

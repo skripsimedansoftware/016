@@ -22,6 +22,7 @@ import {useApp} from '@/contexts/AppContext';
 import LabelItem from '@/components/LabelItem';
 import AppForm from '@/components/Form';
 import LottieLoader from '@/components/LottieLoader';
+import {AppRole, UsahaStatus} from '@/interfaces/App';
 
 type IForm = {
   email: string;
@@ -39,8 +40,23 @@ const AccountScreen: React.FC<Props> = ({route, navigation}) => {
   const [previewImage, setPreviewImage] = React.useState<string | boolean>(
     false,
   );
+  const [usahaStatus, setUsahaStatus] =
+    React.useState<UsahaStatus>('melengkapi');
 
+  const [usahaID, setUsahaID] = React.useState<number>(0);
+
+  const loadInfoUsaha = React.useCallback(() => {
+    request
+      .get<{id: number; owner: number; status: UsahaStatus}>(
+        '/daftar-usaha/mine',
+      )
+      .then(response => {
+        setUsahaID(response.data.id);
+        setUsahaStatus(response.data.status);
+      }, console.log);
+  }, [request]);
   const backActionHandler = React.useCallback(() => {
+    loadInfoUsaha();
     if (previewImage) {
       setPreviewImage(false);
       return true;
@@ -52,7 +68,7 @@ const AccountScreen: React.FC<Props> = ({route, navigation}) => {
     }
 
     return false;
-  }, [navigation, route.params, previewImage]);
+  }, [navigation, route.params, previewImage, loadInfoUsaha]);
 
   const onBlurAction = React.useCallback(() => {
     setPreviewImage(false);
@@ -227,7 +243,47 @@ const AccountScreen: React.FC<Props> = ({route, navigation}) => {
           <LabelItem label="NIK" value={authInfo?.nik} />
           <LabelItem label="Email" value={authInfo?.email} />
           <LabelItem label="Nama Lengkap" value={authInfo?.nama_lengkap} />
+          {authInfo?.jabatan === AppRole.pengusaha && (
+            <LabelItem label="Status Usaha" value={usahaStatus} />
+          )}
         </Box>
+        {['aktif', 'non-aktif'].indexOf(usahaStatus) !== -1 && (
+          <Center py={'$8'}>
+            {usahaStatus === 'non-aktif' ? (
+              <Button
+                action="positive"
+                onPress={() => {
+                  setLoading(true);
+                  request.get(`/${usahaID}/set-status/aktif`).then(
+                    () => {
+                      setLoading(false);
+                    },
+                    () => {
+                      setLoading(false);
+                    },
+                  );
+                }}>
+                <ButtonText>Aktifkan Usaha</ButtonText>
+              </Button>
+            ) : (
+              <Button
+                action="negative"
+                onPress={() => {
+                  setLoading(true);
+                  request.get(`/${usahaID}/set-status/non-aktif`).then(
+                    () => {
+                      setLoading(false);
+                    },
+                    () => {
+                      setLoading(false);
+                    },
+                  );
+                }}>
+                <ButtonText>Non Aktifkan Usaha</ButtonText>
+              </Button>
+            )}
+          </Center>
+        )}
         <HStack
           space={'2xl'}
           borderWidth={0}

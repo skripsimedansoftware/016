@@ -15,7 +15,7 @@ import {
 import {useForm} from 'react-hook-form';
 import mime from 'mime';
 import * as FileSystem from 'expo-file-system';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import AppForm from '@/components/Form';
 import {useApp} from '@/contexts/AppContext';
@@ -32,14 +32,14 @@ type NavigationProps = NativeStackNavigationProp<
   'Registration'
 >;
 
-const RegistrationStep4 = () => {
+const RegistrationStep4: React.FC<{savedForm?: IForm}> = ({savedForm}) => {
   const {
     control,
     handleSubmit,
     watch,
     formState: {errors},
   } = useForm<IForm>({
-    defaultValues: {
+    defaultValues: savedForm || {
       fotocopy_keterangan_usaha: '',
       fotocopy_izin_usaha: '',
       foto_produksi: '',
@@ -47,6 +47,7 @@ const RegistrationStep4 = () => {
   });
   const {request} = useApp();
   const toast = useToast();
+  const router = useRoute<RouteProp<AppStackNavigatorParams, 'Registration'>>();
   const navigation = useNavigation<NavigationProps>();
   const {width} = Dimensions.get('window');
 
@@ -108,7 +109,11 @@ const RegistrationStep4 = () => {
       })
       .then(
         () => {
-          navigation.setParams({step: 5});
+          navigation.setParams({
+            ...router.params,
+            step: 5,
+            submitStep: {step: 4, data},
+          });
         },
         error => {
           if (typeof error.response !== 'undefined') {

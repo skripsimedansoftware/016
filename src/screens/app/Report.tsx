@@ -28,18 +28,13 @@ const ReportScreen: React.FC<Props> = () => {
 
   if (authInfo?.jabatan === AppRole.pengusaha) {
     return (
-      <Box
-        flex={1}
-        justifyContent="center"
-        // alignItems="center"
-        borderTopWidth={1}>
+      <Box flex={1} borderTopWidth={1}>
         {usahaID !== null ? (
           <WebView
             source={{uri: `${request.getUri()}/chart/${usahaID}`}}
             useWebView2={true}
             scrollEnabled={true}
             nestedScrollEnabled={true}
-            // style={{flex: 1, borderWidth: 1, borderColor: 'gray'}}
           />
         ) : (
           <Box flex={1} justifyContent="center" alignItems="center">
@@ -51,7 +46,7 @@ const ReportScreen: React.FC<Props> = () => {
   }
 
   return (
-    <Box flex={1}>
+    <Box flex={1} borderTopWidth={1}>
       <Center>
         <Heading>Cetak</Heading>
       </Center>
@@ -65,7 +60,6 @@ const ReportScreen: React.FC<Props> = () => {
         useWebView2={true}
         scrollEnabled={true}
         nestedScrollEnabled={true}
-        style={{flex: 1}}
       />
     </Box>
   );

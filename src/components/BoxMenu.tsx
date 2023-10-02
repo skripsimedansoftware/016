@@ -142,7 +142,6 @@ const BoxMenu: React.FC<{role: AppRole | string | undefined}> = ({role}) => {
           padding={4}
           justifyContent="space-around">
           <MenuPengguna />
-          <MenuLaporan />
         </HStack>,
       );
       menu.push(

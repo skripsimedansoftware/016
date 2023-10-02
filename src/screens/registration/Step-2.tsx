@@ -12,7 +12,7 @@ import {
   useToast,
 } from '@gluestack-ui/themed';
 import {useForm} from 'react-hook-form';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useApp} from '@/contexts/AppContext';
 import {AppStackNavigatorParams} from '@/interfaces/NavigatorParams';
@@ -48,19 +48,20 @@ type NavigationProps = NativeStackNavigationProp<
   'Registration'
 >;
 
-const RegistrationStep2 = () => {
+const RegistrationStep2: React.FC<{savedForm?: IForm}> = ({savedForm}) => {
   const {
     control,
     handleSubmit,
     watch,
     formState: {},
   } = useForm<IForm>({
-    defaultValues: {
+    defaultValues: savedForm || {
       sektor_usaha: '',
     },
   });
   const {request} = useApp();
   const toast = useToast();
+  const router = useRoute<RouteProp<AppStackNavigatorParams, 'Registration'>>();
   const navigation = useNavigation<NavigationProps>();
   const {width} = Dimensions.get('window');
 
@@ -68,7 +69,11 @@ const RegistrationStep2 = () => {
     // Send request
     request.post('/pendaftaran/step-2', data).then(
       () => {
-        navigation.setParams({step: 3});
+        navigation.setParams({
+          ...router.params,
+          submitStep: {step: 2, data},
+          step: 3,
+        });
       },
       error => {
         if (typeof error.response !== 'undefined') {

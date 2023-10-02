@@ -30,7 +30,7 @@ const RenderItem: React.FC<{
   return (
     <Box borderWidth={0} borderBottomWidth={1} borderColor="$fuchsia600" p={10}>
       {jabatan === 'admin' && (
-        <HStack space="sm" flex={1}>
+        <HStack space="sm" flex={1} px={10}>
           <Box
             justifyContent="center"
             w={'$1/5'}
@@ -90,11 +90,15 @@ const LabelValue: React.FC<{
   value: undefined | null | string | number;
 }> = ({label, value}) => {
   return (
-    <HStack>
-      <Box w={'$1/3'}>
+    <HStack
+      borderWidth={0}
+      borderBottomWidth={1}
+      borderBottomColor="gray"
+      p={10}>
+      <Box w={'$1/2'}>
         <Text>{label}</Text>
       </Box>
-      <Box w={'$1/3'}>
+      <Box w={'$1/2'}>
         <Text>{value}</Text>
       </Box>
     </HStack>
