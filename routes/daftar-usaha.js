@@ -17,20 +17,14 @@ app.get('/', (req, res, next) => {
   }).then(({ count, rows }) => res.json({ count, rows }), next);
 });
 
-app.get('/mine', (req, res, next) => {
-  DaftarUsaha.findOne({
-    where: {
-      owner: req.user,
+app.get('/mine', (req, res, next) => Pengguna.findByPk(req.user, {
+  include: [
+    {
+      model: DaftarUsaha,
+      as: 'usaha',
     },
-    attributes: ['id', 'owner', 'status'],
-  }).then((daftarUsaha) => {
-    if (daftarUsaha !== null) {
-      return res.json(daftarUsaha);
-    }
-
-    return next();
-  }, next);
-});
+  ],
+}).then((daftarUsaha) => res.json(daftarUsaha), next));
 
 app.get('/status/:status', (req, res, next) => {
   DaftarUsaha.findAndCountAll({

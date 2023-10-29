@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   OmzetUsaha.init({
     tahun: DataTypes.INTEGER,
     omzet: DataTypes.DOUBLE,
-    asset: DataTypes.STRING,
+    asset: DataTypes.DOUBLE,
   }, {
     sequelize,
     tableName: 'omzet-usaha',
