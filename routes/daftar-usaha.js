@@ -24,7 +24,13 @@ app.get('/mine', (req, res, next) => Pengguna.findByPk(req.user, {
       as: 'usaha',
     },
   ],
-}).then((daftarUsaha) => res.json(daftarUsaha), next));
+}).then((dataPengguna) => {
+  if (dataPengguna !== null) {
+    return res.json(dataPengguna.usaha);
+  }
+
+  return next();
+}, next));
 
 app.get('/status/:status', (req, res, next) => {
   DaftarUsaha.findAndCountAll({
